@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.web3wallet.ui.main.MainFragment;
@@ -14,10 +15,16 @@ import com.example.web3wallet.ui.main.MainFragment;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
         walletPath = getFilesDir().getAbsolutePath();
         walletDir = new File(walletPath);
+
+
+        connectToLocalNetwork();
 
 
        /*
@@ -123,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     // using LOCAL client node as web3 provider (geth/ganache)
-    public void connectToLocalNetwork(View v) {
+    public void connectToLocalNetwork() {
         toastAsync("Connecting to LOCAL ETH network...");
 
         web3 = Web3j.build(new HttpService()); // defaults to http://localhost:8545/
@@ -140,8 +150,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public String getBalance() {
 
 
+        EthGetBalance ethbalance = null;
+        try {
+            ethbalance = web3
+                    .ethGetBalance(credentials.getAddress(), DefaultBlockParameterName.LATEST)
+                    .sendAsync()
+                    .get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        BigInteger wei = ethbalance.getBalance();
+        BigDecimal balance = Convert.fromWei(String.valueOf(wei), Convert.Unit.ETHER);
+        String strBalance = String.valueOf(balance);
+
+        return strBalance;
+
+    }
+
+    public void showBalance(View v) {
+        String balance = getBalance();
+
+        TextView mBalance = (TextView) findViewById(R.id.userBalance);
+        mBalance.setText(balance);
+
+    }
+
+
+    
     public void toastAsync(String message) {
         runOnUiThread(() -> {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
