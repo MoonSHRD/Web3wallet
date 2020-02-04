@@ -154,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
     public void connectToLocalNetwork() {
         toastAsync("Connecting to LOCAL ETH network...");
 
-        web3 = Web3j.build(new HttpService()); // defaults to http://localhost:8545/
+        // FIXME: for bug with ganache connection. Should be replaced by address of our node
+        web3 = Web3j.build(new HttpService("HTTP://100.124.25.117:8545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             toastAsync(e.getMessage());
+            Log.e("connection", e.getMessage());
         }
     }
 

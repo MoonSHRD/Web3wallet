@@ -124,5 +124,16 @@
             app:layout_constraintStart_toEndOf="@+id/sendToInput"
             app:layout_constraintTop_toBottomOf="@+id/loadWallet" />
 
+        <Button
+            android:id="@+id/refreshBalance"
+            android:layout_width="57dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="102dp"
+            android:onClick="showBalance"
+            android:text="refresh"
+            app:layout_constraintStart_toEndOf="@+id/balanceHint"
+            app:layout_constraintTop_toBottomOf="@+id/editPass" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
