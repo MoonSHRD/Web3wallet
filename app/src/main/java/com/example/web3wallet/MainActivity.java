@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 //import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 
+import java.io.Console;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText ePassword;
     private String walletPath;
     private File walletDir;
+    private String fileName;
 
     private Web3j web3;
     private Credentials credentials;
@@ -78,8 +81,9 @@ public class MainActivity extends AppCompatActivity {
         password = ePassword.getText().toString();
 
         try{
-            WalletUtils.generateLightNewWalletFile(password,walletDir);
-            toastAsync("Wallet generated");
+          fileName =  WalletUtils.generateLightNewWalletFile(password,walletDir);
+          String filepath = walletPath + "/" + fileName;
+            toastAsync("Wallet generated" + filepath);
         }
         catch (Exception e){
             toastAsync(e.getMessage());
@@ -96,8 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
+            String path = walletPath + "/" +fileName;
+            walletDir = new File(path);
             credentials = WalletUtils.loadCredentials(password, walletDir);
             toastAsync("Your address is " + credentials.getAddress());
+
+
             showAddress(v);
             showBalance(v);
         }
@@ -196,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         String address = getMyAddress();
         TextView mAddress = (TextView) findViewById(R.id.walletAdress);
         mAddress.setText(address);
+        Log.d("address",address);
 
     }
 
