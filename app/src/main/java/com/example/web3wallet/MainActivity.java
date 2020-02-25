@@ -68,6 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         connectToLocalNetwork();
+
+        createDummyKey();
+        loadDummyKey();
+
+
       //  setupContracts();
         checkContractAddresses();
 
@@ -105,6 +110,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void createDummyKey() {
+        password = "1984";
+
+        try{
+            fileName =  WalletUtils.generateLightNewWalletFile(password,walletDir);
+            String filepath = walletPath + "/" + fileName;
+            toastAsync("Wallet generated" + filepath);
+        }
+        catch (Exception e){
+            toastAsync(e.getMessage());
+        }
+    }
+
+    public void loadDummyKey() {
+        try {
+            String path = walletPath + "/" +fileName;
+            walletDir = new File(path);
+            credentials = WalletUtils.loadCredentials(password, walletDir);
+            toastAsync("Your address is " + credentials.getAddress());
+
+
+           // showAddress(v);
+           // showBalance(v);
+        }
+        catch (Exception e){
+            toastAsync(e.getMessage());
+        }
+    }
 
     public void loadSimpleWallet(View v) {
 
@@ -318,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
 
       //  kns = KNS.load(KNS.getContractAddress(),web3,credentials,new DefaultGasProvider());
 
-        kns = KNS.load(kns_address_check,web3,credentials,new DefaultGasProvider());  // failed with not initialized credentials
+        kns = KNS.load(kns_address_check,web3,credentials,new DefaultGasProvider());  // worked only with loaded credentials (!!)
         String check = kns.getContractAddress();
         Log.d("try to retrive address(2)", "KNS address (3 check): "+check);
     }
