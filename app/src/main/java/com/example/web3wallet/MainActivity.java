@@ -19,8 +19,10 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.NetVersion;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
 import java.io.Console;
@@ -43,6 +45,16 @@ public class MainActivity extends AppCompatActivity {
     private Web3j web3;
     private Credentials credentials;
 
+    private KNS kns;
+    private SuperFactory superfactory;
+    private TicketFactory721 ticketfactory;
+
+    public static String kns_address;
+    public static String sup_factory_address;
+    public static String ticket_factory_address;
+
+    private String deployed_net_id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         connectToLocalNetwork();
-
+      //  setupContracts();
+        checkContractAddresses();
 
        /*
         if (savedInstanceState == null) {
@@ -155,11 +168,12 @@ public class MainActivity extends AppCompatActivity {
         toastAsync("Connecting to LOCAL ETH network...");
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
-        web3 = Web3j.build(new HttpService("HTTP://100.124.25.117:8545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
                 toastAsync("Connected!");
+                Log.d("client_web3_version", "client web3 version: "+clientVersion.getWeb3ClientVersion());
             }
             else {
                 toastAsync(clientVersion.getError().getMessage());
@@ -236,6 +250,90 @@ public class MainActivity extends AppCompatActivity {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
+
+
+
+    public void setupContracts() {
+
+        try{
+            String net_id =  web3.netVersion().send().getNetVersion();
+            deployed_net_id = net_id;
+        } catch (Exception e) {
+            Log.e("exeption", "can't get version of network (network id), check deployment script "+e);
+            Log.e("exeption","can't get version of network (network id), check deployment script",e);
+        }
+
+        // FIXME: use .getContractAddress() instead
+        kns_address = KNS.getPreviouslyDeployedAddress(deployed_net_id);
+        sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);
+        ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id);
+
+        Log.d("address", "kns_address: "+kns_address);
+        Log.d("address", "sup_factory_address: "+sup_factory_address);
+        Log.d("address", "ticket_factory_address: "+ticket_factory_address);
+
+        kns = KNS.load(kns_address,web3,credentials,new DefaultGasProvider());
+        String check = kns.getContractAddress();
+        Log.d("try to retrive address", "KNS address: "+check);
+
+    }
+
+/*
+    public void checkContractAddresses() {
+        try{
+           // String net_id =  web3.netVersion().send().getNetVersion();
+            NetVersion netVersion   =  web3.netVersion().send();
+            String net_id = netVersion.getNetVersion();
+            Log.d("netversion", "netVersion: " + net_id);
+            deployed_net_id = net_id;
+        } catch (Exception e) {
+            Log.e("exeption", "can't get version of network (network id), check deployment script "+e);
+            Log.e("exeption","can't get version of network (network id), check deployment script",e);
+        }
+    }
+*/
+
+    public void checkContractAddresses() {
+
+      //  kns_address = KNS.;
+       // sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);
+      //  ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id);
+
+      //  Log.d("address", "kns_address: "+kns_address);
+      //  Log.d("address", "sup_factory_address: "+sup_factory_address);
+      //  Log.d("address", "ticket_factory_address: "+ticket_factory_address);
+
+        try {
+            String kns_address_check = KNS.getPreviouslyDeployedAddress("5777");
+            Log.d("address check", "KNS address (1 check): "+kns_address_check); // works fine
+
+        } catch (Exception e) {
+            Log.e("exeption", "unable to get contract address: ",e);
+        }
+
+       // 5777 - is for ganache
+       String kns_address_check = KNS.getPreviouslyDeployedAddress("5777");
+        Log.d("address check", "KNS address (2 check): "+kns_address_check); // works fine
+
+
+      //  kns = KNS.load(KNS.getContractAddress(),web3,credentials,new DefaultGasProvider());
+
+        kns = KNS.load(kns_address_check,web3,credentials,new DefaultGasProvider());  // failed with not initialized credentials
+        String check = kns.getContractAddress();
+        Log.d("try to retrive address(2)", "KNS address (3 check): "+check);
+    }
+
+
+
+    /*
+    public void setupKNS() {
+       String net_id =  web3.netVersion().send().getNetVersion();
+
+        String kns_address = KNS.getPreviouslyDeployedAddress("ganache");
+
+    }
+     */
+
 
 
 }
