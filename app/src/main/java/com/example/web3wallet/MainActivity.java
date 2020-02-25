@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         loadDummyKey();
 
 
-      //  setupContracts();
-        checkContractAddresses();
+        setupContracts();
+      //  checkContractAddresses();
 
        /*
         if (savedInstanceState == null) {
@@ -288,6 +288,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupContracts() {
 
+        // FIXME: can't automatically get net id from artifacts, probably bug
+        /*
         try{
             String net_id =  web3.netVersion().send().getNetVersion();
             deployed_net_id = net_id;
@@ -295,37 +297,37 @@ public class MainActivity extends AppCompatActivity {
             Log.e("exeption", "can't get version of network (network id), check deployment script "+e);
             Log.e("exeption","can't get version of network (network id), check deployment script",e);
         }
+        */
 
-        // FIXME: use .getContractAddress() instead
+        // FIXME: check net id for local and cloud enviroment
+        String net_id = "5777";  // 5777 - for ganache (local testing)
+        deployed_net_id = net_id;
+
+
         kns_address = KNS.getPreviouslyDeployedAddress(deployed_net_id);
         sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);
         ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id);
 
-        Log.d("address", "kns_address: "+kns_address);
-        Log.d("address", "sup_factory_address: "+sup_factory_address);
-        Log.d("address", "ticket_factory_address: "+ticket_factory_address);
+        Log.d("deployed_address", "kns_address: "+kns_address);
+        Log.d("deployed_address", "sup_factory_address: "+sup_factory_address);
+        Log.d("deployed_address", "ticket_factory_address: "+ticket_factory_address);
 
         kns = KNS.load(kns_address,web3,credentials,new DefaultGasProvider());
         String check = kns.getContractAddress();
-        Log.d("try to retrive address", "KNS address: "+check);
+        Log.d("instance_address", "KNS address: "+check);
+
+        superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider());
+        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider());
+
+        // Check
+        Log.d("instance_address", "superfactory address:"+superfactory.getContractAddress());
+        Log.d("instance_address ", "ticketfactory address:"+ticketfactory.getContractAddress());
 
     }
 
-/*
-    public void checkContractAddresses() {
-        try{
-           // String net_id =  web3.netVersion().send().getNetVersion();
-            NetVersion netVersion   =  web3.netVersion().send();
-            String net_id = netVersion.getNetVersion();
-            Log.d("netversion", "netVersion: " + net_id);
-            deployed_net_id = net_id;
-        } catch (Exception e) {
-            Log.e("exeption", "can't get version of network (network id), check deployment script "+e);
-            Log.e("exeption","can't get version of network (network id), check deployment script",e);
-        }
-    }
-*/
 
+
+    // For testing purposes
     public void checkContractAddresses() {
 
       //  kns_address = KNS.;
@@ -358,14 +360,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    /*
-    public void setupKNS() {
-       String net_id =  web3.netVersion().send().getNetVersion();
 
-        String kns_address = KNS.getPreviouslyDeployedAddress("ganache");
-
-    }
-     */
 
 
 
