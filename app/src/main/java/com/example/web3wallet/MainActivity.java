@@ -374,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    //FIXME: function createMultisigWallet with multiple owners
 
     public void createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
