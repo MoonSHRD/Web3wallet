@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 //import android.support.v7.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -75,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
         createDummyKey();
         loadDummyKey();
+
+
 
 
         setupContracts();
@@ -157,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             walletDir = new File(path);
             credentials = WalletUtils.loadCredentials(password, walletDir);
             toastAsync("Your address is " + credentials.getAddress());
+          //  Log.d(TAG, "loadSimpleWallet: ");
 
 
             showAddress(v);
@@ -334,36 +338,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void createSimpleMultisigWalletTest() {
+    public Void createSimpleMultisigWalletTest() {
+        String _owner = getMyAddress();
+        BigInteger _required = new BigInteger("1");
+        BigInteger _dailyLimit = new BigInteger("10000");
+        String JID = "cheburek@conference.moonhsard.tech";
+        String telephone = "+79687003680";
 
+        createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
+        return null;
     }
 
 
     public void createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
-        TransactionReceipt recept;
+       // TransactionReceipt recept;
 
-        try {
-            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send();
-            recept = receipt;
-        } catch (Exception e) {
-            Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
-        }
-
-            String txHash = recept.getTransactionHash(); // not initializing if tx fail.
-
+        /*
         TransactionReceiptProcessor receiptProcessor =
                 new PollingTransactionReceiptProcessor(web3, TransactionManager.DEFAULT_POLLING_FREQUENCY,
                         TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
+        */
+
 
         try {
-            TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send();
+            Log.d("receipt", "receipt"+receipt);
+          //  recept = receipt;
+            String txHash = receipt.getTransactionHash();
+         //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+            Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
         } catch (Exception e) {
+           // Log.d("tx hash", "txhash"+txHash);
             Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
+
         }
 
 
+
+
     }
+
+    public void createSimpleMultisigWalletTestView(View v) {
+       // createSimpleMultisigWalletTest();
+        new AsyncRequest().execute();
+    }
+
 
     // For testing purposes
     public void checkContractAddresses() {
@@ -399,7 +419,24 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    class AsyncRequest extends AsyncTask<Void,Void,Void> {
 
+        @Override
+        protected Void doInBackground(Void...params) {
+          //  createSimpleMultisigWalletTest();
+            return createSimpleMultisigWalletTest();
+        }
+
+        /*
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+        }
+
+         */
+
+    }
 
 
 }
