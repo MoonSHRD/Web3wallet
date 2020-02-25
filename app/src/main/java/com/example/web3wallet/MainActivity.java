@@ -25,6 +25,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
@@ -59,6 +60,14 @@ public class MainActivity extends AppCompatActivity {
     public static String ticket_factory_address;
 
     private String deployed_net_id;
+
+
+    // custom gasprice
+    private static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();  // FIXME
+
+  //  private static final BigInteger CUSTOM_GAS_LIMIT = Convert.toWei("6721975", Convert.Unit.GWEI).toBigInteger();
+  private static final BigInteger CUSTOM_GAS_LIMIT = BigInteger.valueOf(4_100_000_000L);
+
 
 
     @Override
@@ -316,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
         deployed_net_id = net_id;
 
 
+
         kns_address = KNS.getPreviouslyDeployedAddress(deployed_net_id);
         sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);
         ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id);
@@ -324,12 +334,27 @@ public class MainActivity extends AppCompatActivity {
         Log.d("deployed_address", "sup_factory_address: "+sup_factory_address);
         Log.d("deployed_address", "ticket_factory_address: "+ticket_factory_address);
 
-        kns = KNS.load(kns_address,web3,credentials,new DefaultGasProvider());
+
+        ContractGasProvider gasprovider = new DefaultGasProvider();
+
+        Log.d("gasLimit", "gasLimit: "+gasprovider.getGasLimit());
+       // gasprovider.getGasLimit();
+
+        Log.d("gasLimit", "custom gas limit: " + CUSTOM_GAS_LIMIT);
+
+
+
+
+        kns = KNS.load(kns_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
         String check = kns.getContractAddress();
         Log.d("instance_address", "KNS address: "+check);
 
-        superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider()); //FIXME: change default gas provider to custom.  We will need this for invoking functions with gasprice = 0
-        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider()); // FIXME: probably could workaround with custom transaction calls. need to check that.
+      //  superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider()); //FIXME: change default gas provider to custom.  We will need this for invoking functions with gasprice = 0
+      //  ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider()); // FIXME: probably could workaround with custom transaction calls. need to check that.
+
+
+        superfactory = SuperFactory.load(sup_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
 
         // Check
         Log.d("instance_address", "superfactory address:"+superfactory.getContractAddress());
@@ -362,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
-            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send();
+            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send(); // FIXME: change .send to custom transaction
             Log.d("receipt", "receipt"+receipt);
           //  recept = receipt;
             String txHash = receipt.getTransactionHash();
