@@ -20,9 +20,13 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.NetVersion;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.response.PollingTransactionReceiptProcessor;
+import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Convert;
 
 import java.io.Console;
@@ -110,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // create dummy key with default password
     public void createDummyKey() {
         password = "1984";
 
@@ -123,12 +128,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // load dummy key with default password
     public void loadDummyKey() {
         try {
             String path = walletPath + "/" +fileName;
             walletDir = new File(path);
             credentials = WalletUtils.loadCredentials(password, walletDir);
             toastAsync("Your address is " + credentials.getAddress());
+            Log.d("my address", "my address is: " + credentials.getAddress());
 
 
            // showAddress(v);
@@ -286,6 +293,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    // setting up instances of smart contracts
     public void setupContracts() {
 
         // FIXME: can't automatically get net id from artifacts, probably bug
@@ -316,8 +324,8 @@ public class MainActivity extends AppCompatActivity {
         String check = kns.getContractAddress();
         Log.d("instance_address", "KNS address: "+check);
 
-        superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider());
-        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider());
+        superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider()); //FIXME: change default gas provider to custom.  We will need this for invoking functions with gasprice = 0
+        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider()); // FIXME: probably could workaround with custom transaction calls. need to check that.
 
         // Check
         Log.d("instance_address", "superfactory address:"+superfactory.getContractAddress());
@@ -326,6 +334,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void createSimpleMultisigWalletTest() {
+
+    }
+
+
+    public void createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
+
+        TransactionReceipt recept;
+
+        try {
+            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send();
+            recept = receipt;
+        } catch (Exception e) {
+            Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
+        }
+
+            String txHash = recept.getTransactionHash(); // not initializing if tx fail.
+
+        TransactionReceiptProcessor receiptProcessor =
+                new PollingTransactionReceiptProcessor(web3, TransactionManager.DEFAULT_POLLING_FREQUENCY,
+                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
+
+        try {
+            TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+        } catch (Exception e) {
+            Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
+        }
+
+
+    }
 
     // For testing purposes
     public void checkContractAddresses() {
