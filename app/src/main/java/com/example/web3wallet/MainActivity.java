@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 //import android.support.v7.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,9 +21,14 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.NetVersion;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.response.PollingTransactionReceiptProcessor;
+import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Convert;
 
 import java.io.Console;
@@ -56,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
     private String deployed_net_id;
 
 
+    // custom gasprice
+    private static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();  // FIXME
+
+  //  private static final BigInteger CUSTOM_GAS_LIMIT = Convert.toWei("6721975", Convert.Unit.GWEI).toBigInteger();
+  private static final BigInteger CUSTOM_GAS_LIMIT = BigInteger.valueOf(4_100_000_000L);
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
         createDummyKey();
         loadDummyKey();
+
+
 
 
         setupContracts();
@@ -110,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // create dummy key with default password
     public void createDummyKey() {
         password = "1984";
 
@@ -123,12 +140,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // load dummy key with default password
     public void loadDummyKey() {
         try {
             String path = walletPath + "/" +fileName;
             walletDir = new File(path);
             credentials = WalletUtils.loadCredentials(password, walletDir);
             toastAsync("Your address is " + credentials.getAddress());
+            Log.d("my address", "my address is: " + credentials.getAddress());
 
 
            // showAddress(v);
@@ -150,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
             walletDir = new File(path);
             credentials = WalletUtils.loadCredentials(password, walletDir);
             toastAsync("Your address is " + credentials.getAddress());
+          //  Log.d(TAG, "loadSimpleWallet: ");
 
 
             showAddress(v);
@@ -286,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    // setting up instances of smart contracts
     public void setupContracts() {
 
         // FIXME: can't automatically get net id from artifacts, probably bug
@@ -304,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
         deployed_net_id = net_id;
 
 
+
         kns_address = KNS.getPreviouslyDeployedAddress(deployed_net_id);
         sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);
         ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id);
@@ -312,12 +334,27 @@ public class MainActivity extends AppCompatActivity {
         Log.d("deployed_address", "sup_factory_address: "+sup_factory_address);
         Log.d("deployed_address", "ticket_factory_address: "+ticket_factory_address);
 
-        kns = KNS.load(kns_address,web3,credentials,new DefaultGasProvider());
+
+        ContractGasProvider gasprovider = new DefaultGasProvider();
+
+        Log.d("gasLimit", "gasLimit: "+gasprovider.getGasLimit());
+       // gasprovider.getGasLimit();
+
+        Log.d("gasLimit", "custom gas limit: " + CUSTOM_GAS_LIMIT);
+
+
+
+
+        kns = KNS.load(kns_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
         String check = kns.getContractAddress();
         Log.d("instance_address", "KNS address: "+check);
 
-        superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider());
-        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider());
+      //  superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider()); //FIXME: change default gas provider to custom.  We will need this for invoking functions with gasprice = 0
+      //  ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider()); // FIXME: probably could workaround with custom transaction calls. need to check that.
+
+
+        superfactory = SuperFactory.load(sup_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
 
         // Check
         Log.d("instance_address", "superfactory address:"+superfactory.getContractAddress());
@@ -325,6 +362,52 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    public Void createSimpleMultisigWalletTest() {
+        String _owner = getMyAddress();
+        BigInteger _required = new BigInteger("1");
+        BigInteger _dailyLimit = new BigInteger("10000");
+        String JID = "cheburek@conference.moonhsard.tech";
+        String telephone = "+79687003680";
+
+        createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
+        return null;
+    }
+
+
+    public void createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
+
+       // TransactionReceipt recept;
+
+        /*
+        TransactionReceiptProcessor receiptProcessor =
+                new PollingTransactionReceiptProcessor(web3, TransactionManager.DEFAULT_POLLING_FREQUENCY,
+                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
+        */
+
+
+        try {
+            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send(); // FIXME: change .send to custom transaction
+            Log.d("receipt", "receipt"+receipt);
+          //  recept = receipt;
+            String txHash = receipt.getTransactionHash();
+         //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+            Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
+        } catch (Exception e) {
+           // Log.d("tx hash", "txhash"+txHash);
+            Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
+
+        }
+
+
+
+
+    }
+
+    public void createSimpleMultisigWalletTestView(View v) {
+       // createSimpleMultisigWalletTest();
+        new AsyncRequest().execute();
+    }
 
 
     // For testing purposes
@@ -361,7 +444,24 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    class AsyncRequest extends AsyncTask<Void,Void,Void> {
 
+        @Override
+        protected Void doInBackground(Void...params) {
+          //  createSimpleMultisigWalletTest();
+            return createSimpleMultisigWalletTest();
+        }
+
+        /*
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+        }
+
+         */
+
+    }
 
 
 }
