@@ -146,5 +146,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sendToInput" />
 
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="32dp"
+            android:onClick="createMultipleMultisigWalTestView"
+            android:text="create Multi wallet test"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonMSW" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
