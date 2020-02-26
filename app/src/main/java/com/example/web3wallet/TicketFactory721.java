@@ -35,7 +35,7 @@ public class TicketFactory721 extends Contract {
 
     static {
         _addresses = new HashMap<String, String>();
-        _addresses.put("5777", "0xf51E1c9524372fdED70CBc7199C1f5d07f5CBF53");
+        _addresses.put("5777", "0x8571a5d09dAc0e0bD51A774506A8C6aA4dBa8483");
     }
 
     @Deprecated

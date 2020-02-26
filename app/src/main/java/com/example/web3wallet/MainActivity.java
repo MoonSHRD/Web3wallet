@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
         BigInteger _required = new BigInteger("1");
         BigInteger _dailyLimit = new BigInteger("10000");
         String JID = "cheburek@conference.moonhsard.tech";
-        String telephone = "+79687003680";
+        String telephone = "79687003680";
 
 
 
@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
         BigInteger _required = new BigInteger("1");
         BigInteger _dailyLimit = new BigInteger("10000");
         String JID = "cheburek@conference.moonhsard.tech";
-        String telephone = "+79687003680";
+        String telephone = "79687003680";
 
         createMultisigWal(_owner,_required,_dailyLimit,JID,telephone);
         return null;
