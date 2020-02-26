@@ -37,6 +37,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.Provider;
 import java.security.Security;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -370,11 +373,47 @@ public class MainActivity extends AppCompatActivity {
         String JID = "cheburek@conference.moonhsard.tech";
         String telephone = "+79687003680";
 
+
+
         createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
         return null;
     }
 
     //FIXME: function createMultisigWallet with multiple owners
+
+    public Void createMultisigWalTest() {
+
+        String _owner = getMyAddress();
+        BigInteger _required = new BigInteger("1");
+        BigInteger _dailyLimit = new BigInteger("10000");
+        String JID = "cheburek@conference.moonhsard.tech";
+        String telephone = "+79687003680";
+
+        createMultisigWal(_owner,_required,_dailyLimit,JID,telephone);
+        return null;
+    }
+
+    public void createMultisigWal(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
+
+
+        List<String> _owners = new ArrayList<String>();
+
+        _owners.add(_owner);
+
+        try {
+            TransactionReceipt receipt = superfactory.createWallet(_owners,_required,_dailyLimit,JID,telephone).send();
+            Log.d("receipt", "receipt"+receipt);
+            //  recept = receipt;
+            String txHash = receipt.getTransactionHash();
+            //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+            Log.d("txHash", "createMultipleMultisigWallet RESULT: "+txHash);
+        } catch (Exception e) {
+            // Log.d("tx hash", "txhash"+txHash);
+            Log.e("tx exeption", "createMultipleMultisigWallet Transaction fails:",e);
+
+        }
+
+    }
 
     public void createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
@@ -408,6 +447,10 @@ public class MainActivity extends AppCompatActivity {
     public void createSimpleMultisigWalletTestView(View v) {
        // createSimpleMultisigWalletTest();
         new AsyncRequest().execute();
+    }
+
+    public void createMultipleMultisigWalTestView(View v) {
+        new AsyncMulTest().execute();
     }
 
 
@@ -464,5 +507,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    class AsyncMulTest extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Void...params) {
+            //  createSimpleMultisigWalletTest();
+          //  return createSimpleMultisigWalletTest();
+            return  createMultisigWalTest();
+        }
+
+        /*
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+        }
+
+         */
+
+    }
 
 }
