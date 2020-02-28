@@ -519,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
     public  void createSimpleMultisigWalletTestAsync() {
         try {
             String txHash = await(Promise.resolve(createSimpleMultisigWalletTest()));
-        } catch(Exception e) {
+        } catch(Throwable e) {
             Log.e("error","tx failed",e);
         }
 
