@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.web3wallet.ui.main.MainFragment;
+import com.onehilltech.promises.Promise;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.crypto.Credentials;
@@ -55,6 +56,14 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+//import com.onehilltech.promises.BuildConfig;
+//import com.onehilltech.promises.*;
+//import com.onehilltech.promises.R;
+//import com.onehilltech.promises.ResolvedOnUIThread;
+import static com.onehilltech.promises.Promise.await;
+import static com.onehilltech.promises.Promise.resolve;
+
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -65,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private String fileName;
 
     private Web3j web3;
+    private Promise p;
    // private Rx
     private Credentials credentials;
 
@@ -506,6 +516,16 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    public  void createSimpleMultisigWalletTestAsync() {
+        try {
+            String txHash = await(Promise.resolve(createSimpleMultisigWalletTest()));
+        } catch(Exception e) {
+            Log.e("error","tx failed",e);
+        }
+
+    }
+
+    /*
     public void createSimpleMultisigWalletTestAsync() {
 
 
@@ -540,10 +560,12 @@ public class MainActivity extends AppCompatActivity {
                     // continue with app flow
                 });
 
-          */
-    }
 
-/*
+    }
+    */
+
+
+ /*
     class AsyncRequest extends AsyncTask<Void,Void,Void> {
 
         @Override
