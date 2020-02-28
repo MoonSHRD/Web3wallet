@@ -40,7 +40,20 @@ import java.security.Security;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+
+
+
+//import io.reactivex.rxjava3.core.*;
+//import io.reactivex.rxjava3.*;
+//import io.reactivex.Observable;
+
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private String fileName;
 
     private Web3j web3;
+   // private Rx
     private Credentials credentials;
 
     private KNS kns;
@@ -63,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     public static String ticket_factory_address;
 
     private String deployed_net_id;
+
+
 
 
     // custom gasprice
@@ -366,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public Void createSimpleMultisigWalletTest() {
+    public String createSimpleMultisigWalletTest() {
         String _owner = getMyAddress();
         BigInteger _required = new BigInteger("1");
         BigInteger _dailyLimit = new BigInteger("10000");
@@ -374,9 +390,9 @@ public class MainActivity extends AppCompatActivity {
         String telephone = "79687003680";
 
 
+        String txHash = createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
 
-        createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
-        return null;
+        return txHash;
     }
 
     //FIXME: function createMultisigWallet with multiple owners
@@ -415,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
+    public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
        // TransactionReceipt recept;
 
@@ -425,12 +441,14 @@ public class MainActivity extends AppCompatActivity {
                         TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
         */
 
+        String vtxHash = null;
 
         try {
             TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send(); // FIXME: change .send to custom transaction
             Log.d("receipt", "receipt"+receipt);
           //  recept = receipt;
             String txHash = receipt.getTransactionHash();
+            vtxHash = txHash;
          //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
             Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
         } catch (Exception e) {
@@ -439,18 +457,19 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
+        return vtxHash;
 
 
     }
 
     public void createSimpleMultisigWalletTestView(View v) {
        // createSimpleMultisigWalletTest();
-        new AsyncRequest().execute();
+      //  new AsyncRequest().execute();
+        createSimpleMultisigWalletTestAsync();
     }
 
     public void createMultipleMultisigWalTestView(View v) {
-        new AsyncMulTest().execute();
+      //  new AsyncMulTest().execute();
     }
 
 
@@ -487,7 +506,44 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    public void createSimpleMultisigWalletTestAsync() {
 
+
+        // put input parameters here. commented cause of test
+
+     //   String t = "test";
+
+       // var requestStream = Observable.just(' ');
+
+        //var requestStream = io.reactivex.rxjava3.core.Observable.just(t);
+
+        //var requestStream = Observable.just(null);
+
+     //   var responseStream = requestStream.
+
+        Callable<String> createSimpleMultisigWalletTest = () -> {
+          return  createSimpleMultisigWalletTest();
+        };
+
+        Observable<String> responseStream = Observable.fromCallable(createSimpleMultisigWalletTest);
+
+        responseStream.subscribe(result -> {
+            Log.d("observer - response", "createSimpleMultisigWalletTestAsync: " + result);
+        });
+
+         /*
+        createSimpleMultisigWalletTest()
+                .filter(success -> success)
+                .flatMap(success -> api.login(new AuthData(username, password)))
+                .flatMap(token -> api.getUser(token))
+                .subscribe(userDetails -> {
+                    // continue with app flow
+                });
+
+          */
+    }
+
+/*
     class AsyncRequest extends AsyncTask<Void,Void,Void> {
 
         @Override
@@ -496,14 +552,7 @@ public class MainActivity extends AppCompatActivity {
             return createSimpleMultisigWalletTest();
         }
 
-        /*
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
 
-        }
-
-         */
 
     }
 
@@ -524,8 +573,10 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-         */
+
 
     }
+
+    */
 
 }
