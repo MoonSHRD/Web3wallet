@@ -42,6 +42,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 
@@ -250,7 +251,8 @@ public class MainActivity extends AppCompatActivity {
         toastAsync("Connecting to LOCAL ETH network...");
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
-        web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
+       // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://172.16.4.8:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -454,10 +456,25 @@ public class MainActivity extends AppCompatActivity {
         String vtxHash = null;
 
         try {
-            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send(); // FIXME: change .send to custom transaction
+            CompletableFuture<TransactionReceipt> receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash(); // can play with that
+               // vtxHash = txHash;
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
+
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+
+            });
+
+          //  TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send(); // FIXME: change .send to custom transaction
             Log.d("receipt", "receipt"+receipt);
           //  recept = receipt;
-            String txHash = receipt.getTransactionHash();
+            String txHash = receipt.get().getTransactionHash();
+           // String txHash = receipt.getTransactionHash();
             vtxHash = txHash;
          //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
             Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
@@ -476,6 +493,7 @@ public class MainActivity extends AppCompatActivity {
        // createSimpleMultisigWalletTest();
       //  new AsyncRequest().execute();
         createSimpleMultisigWalletTestAsync();
+     //   createSimpleMultisigWalletTestPromise();
     }
 
     public void createMultipleMultisigWalTestView(View v) {
@@ -519,10 +537,15 @@ public class MainActivity extends AppCompatActivity {
     public  void createSimpleMultisigWalletTestAsync() {
         try {
             String txHash = await(Promise.resolve(createSimpleMultisigWalletTest()));
+
         } catch(Throwable e) {
             Log.e("error","tx failed",e);
         }
 
+    }
+
+    public  void createSimpleMultisigWalletTestPromise() {
+        Promise.resolve(createSimpleMultisigWalletTest());
     }
 
     /*
