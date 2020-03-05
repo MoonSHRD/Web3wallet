@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.web3wallet.ui.main.MainFragment;
+import com.onehilltech.promises.Promise;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.crypto.Credentials;
@@ -40,7 +41,29 @@ import java.security.Security;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+
+
+//import io.reactivex.rxjava3.core.*;
+//import io.reactivex.rxjava3.*;
+//import io.reactivex.Observable;
+
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
+//import com.onehilltech.promises.BuildConfig;
+//import com.onehilltech.promises.*;
+//import com.onehilltech.promises.R;
+//import com.onehilltech.promises.ResolvedOnUIThread;
+import static com.onehilltech.promises.Promise.await;
+import static com.onehilltech.promises.Promise.resolve;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     private String fileName;
 
     private Web3j web3;
+    private Promise p;
+   // private Rx
     private Credentials credentials;
 
     private KNS kns;
@@ -63,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
     public static String ticket_factory_address;
 
     private String deployed_net_id;
+
+
 
 
     // custom gasprice
@@ -224,7 +251,8 @@ public class MainActivity extends AppCompatActivity {
         toastAsync("Connecting to LOCAL ETH network...");
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
-        web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
+       // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://172.16.4.8:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -366,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public Void createSimpleMultisigWalletTest() {
+    public String createSimpleMultisigWalletTest() {
         String _owner = getMyAddress();
         BigInteger _required = new BigInteger("1");
         BigInteger _dailyLimit = new BigInteger("10000");
@@ -374,9 +402,9 @@ public class MainActivity extends AppCompatActivity {
         String telephone = "79687003680";
 
 
+        String txHash = createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
 
-        createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
-        return null;
+        return txHash;
     }
 
     //FIXME: function createMultisigWallet with multiple owners
@@ -401,10 +429,19 @@ public class MainActivity extends AppCompatActivity {
         _owners.add(_owner);
 
         try {
-            TransactionReceipt receipt = superfactory.createWallet(_owners,_required,_dailyLimit,JID,telephone).send();
-            Log.d("receipt", "receipt"+receipt);
-            //  recept = receipt;
-            String txHash = receipt.getTransactionHash();
+            CompletableFuture<TransactionReceipt> receipt = superfactory.createWallet(_owners,_required,_dailyLimit,JID,telephone).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash(); // can play with that
+                // vtxHash = txHash;
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+            });
+            
+            String txHash = receipt.get().getTransactionHash();
             //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
             Log.d("txHash", "createMultipleMultisigWallet RESULT: "+txHash);
         } catch (Exception e) {
@@ -415,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
+    public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
        // TransactionReceipt recept;
 
@@ -425,32 +462,42 @@ public class MainActivity extends AppCompatActivity {
                         TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
         */
 
+        String vtxHash = null;
 
         try {
-            TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send(); // FIXME: change .send to custom transaction
-            Log.d("receipt", "receipt"+receipt);
-          //  recept = receipt;
-            String txHash = receipt.getTransactionHash();
-         //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+            CompletableFuture<TransactionReceipt> receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash(); // can play with that
+               // vtxHash = txHash;
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
+
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+
+            });
+
+
+            String txHash = receipt.get().getTransactionHash();
+            vtxHash = txHash;
             Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
         } catch (Exception e) {
-           // Log.d("tx hash", "txhash"+txHash);
             Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
-
         }
 
-
+        return vtxHash;
 
 
     }
 
     public void createSimpleMultisigWalletTestView(View v) {
-       // createSimpleMultisigWalletTest();
-        new AsyncRequest().execute();
+        createSimpleMultisigWalletTest();
     }
 
     public void createMultipleMultisigWalTestView(View v) {
-        new AsyncMulTest().execute();
+        createMultisigWalTest();
     }
 
 
@@ -488,44 +535,5 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    class AsyncRequest extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected Void doInBackground(Void...params) {
-          //  createSimpleMultisigWalletTest();
-            return createSimpleMultisigWalletTest();
-        }
-
-        /*
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-        }
-
-         */
-
-    }
-
-
-    class AsyncMulTest extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected Void doInBackground(Void...params) {
-            //  createSimpleMultisigWalletTest();
-          //  return createSimpleMultisigWalletTest();
-            return  createMultisigWalTest();
-        }
-
-        /*
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-        }
-
-         */
-
-    }
 
 }
