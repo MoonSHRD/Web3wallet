@@ -429,10 +429,19 @@ public class MainActivity extends AppCompatActivity {
         _owners.add(_owner);
 
         try {
-            TransactionReceipt receipt = superfactory.createWallet(_owners,_required,_dailyLimit,JID,telephone).send();
-            Log.d("receipt", "receipt"+receipt);
-            //  recept = receipt;
-            String txHash = receipt.getTransactionHash();
+            CompletableFuture<TransactionReceipt> receipt = superfactory.createWallet(_owners,_required,_dailyLimit,JID,telephone).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash(); // can play with that
+                // vtxHash = txHash;
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+            });
+            
+            String txHash = receipt.get().getTransactionHash();
             //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
             Log.d("txHash", "createMultipleMultisigWallet RESULT: "+txHash);
         } catch (Exception e) {
@@ -470,18 +479,12 @@ public class MainActivity extends AppCompatActivity {
 
             });
 
-          //  TransactionReceipt receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).send(); // FIXME: change .send to custom transaction
-            Log.d("receipt", "receipt"+receipt);
-          //  recept = receipt;
+
             String txHash = receipt.get().getTransactionHash();
-           // String txHash = receipt.getTransactionHash();
             vtxHash = txHash;
-         //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
             Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
         } catch (Exception e) {
-           // Log.d("tx hash", "txhash"+txHash);
             Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
-
         }
 
         return vtxHash;
@@ -490,14 +493,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createSimpleMultisigWalletTestView(View v) {
-       // createSimpleMultisigWalletTest();
-      //  new AsyncRequest().execute();
-        createSimpleMultisigWalletTestAsync();
-     //   createSimpleMultisigWalletTestPromise();
+        createSimpleMultisigWalletTest();
     }
 
     public void createMultipleMultisigWalTestView(View v) {
-      //  new AsyncMulTest().execute();
+        createMultisigWalTest();
     }
 
 
@@ -534,94 +534,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public  void createSimpleMultisigWalletTestAsync() {
-        try {
-            String txHash = await(Promise.resolve(createSimpleMultisigWalletTest()));
 
-        } catch(Throwable e) {
-            Log.e("error","tx failed",e);
-        }
-
-    }
-
-    public  void createSimpleMultisigWalletTestPromise() {
-        Promise.resolve(createSimpleMultisigWalletTest());
-    }
-
-    /*
-    public void createSimpleMultisigWalletTestAsync() {
-
-
-        // put input parameters here. commented cause of test
-
-     //   String t = "test";
-
-       // var requestStream = Observable.just(' ');
-
-        //var requestStream = io.reactivex.rxjava3.core.Observable.just(t);
-
-        //var requestStream = Observable.just(null);
-
-     //   var responseStream = requestStream.
-
-        Callable<String> createSimpleMultisigWalletTest = () -> {
-          return  createSimpleMultisigWalletTest();
-        };
-
-        Observable<String> responseStream = Observable.fromCallable(createSimpleMultisigWalletTest);
-
-        responseStream.subscribe(result -> {
-            Log.d("observer - response", "createSimpleMultisigWalletTestAsync: " + result);
-        });
-
-         /*
-        createSimpleMultisigWalletTest()
-                .filter(success -> success)
-                .flatMap(success -> api.login(new AuthData(username, password)))
-                .flatMap(token -> api.getUser(token))
-                .subscribe(userDetails -> {
-                    // continue with app flow
-                });
-
-
-    }
-    */
-
-
- /*
-    class AsyncRequest extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected Void doInBackground(Void...params) {
-          //  createSimpleMultisigWalletTest();
-            return createSimpleMultisigWalletTest();
-        }
-
-
-
-    }
-
-
-    class AsyncMulTest extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected Void doInBackground(Void...params) {
-            //  createSimpleMultisigWalletTest();
-          //  return createSimpleMultisigWalletTest();
-            return  createMultisigWalTest();
-        }
-
-        /*
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-        }
-
-
-
-    }
-
-    */
 
 }
