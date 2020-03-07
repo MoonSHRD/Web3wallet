@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
        // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
-        web3 = Web3j.build(new HttpService("HTTP://192.168.1.19:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.0.227:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -510,19 +510,19 @@ public class MainActivity extends AppCompatActivity {
             List log = receipt.get().getLogs();
 
             List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get());
-            Object raw_event = response.get(0);
-            get_log = log.get()
 
+
+                    /*
             List<Type> args = FunctionReturnDecoder.decode(
                     log.getData(), my_event.getParameters());
             System.out.println("Seller : "+args(0).getValue());
             System.out.println("Price  : "+args(1).getValue());
-
+            */
 
 
             Log.d("event_response", "event_Human_registred_response: " +response);
-            Log.d("raw_event_single", "Human registred event:" + raw_event);
-            Log.d("event_value_JID", "wallet registred with JID: " + event_value);
+           // Log.d("raw_event_single", "Human registred event:" + raw_event);
+
 
 
 
