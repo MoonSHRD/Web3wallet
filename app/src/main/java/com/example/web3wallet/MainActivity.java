@@ -511,18 +511,19 @@ public class MainActivity extends AppCompatActivity {
 
             List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get());
 
+            Object raw_result = response.get(0);
 
-                    /*
-            List<Type> args = FunctionReturnDecoder.decode(
-                    log.getData(), my_event.getParameters());
-            System.out.println("Seller : "+args(0).getValue());
-            System.out.println("Price  : "+args(1).getValue());
-            */
+            String JID_responce = response.get(0).JID;
+            String wallet_responce = response.get(0).wallet;
+            String telephone_responce = response.get(0).tel;
+            String prime_owner_responce = response.get(0).prime_owner;
+
+
 
 
             Log.d("event_response", "event_Human_registred_response: " +response);
-           // Log.d("raw_event_single", "Human registred event:" + raw_event);
-
+            Log.d("event_values", "event values: " + JID_responce + " " + telephone_responce + " " + prime_owner_responce + " " + wallet_responce);
+            Log.d("resultat", "new wallet address is: " + wallet_responce);
 
 
 
