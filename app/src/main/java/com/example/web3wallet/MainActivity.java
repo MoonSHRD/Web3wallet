@@ -17,6 +17,7 @@ import com.onehilltech.promises.Promise;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.abi.EventValues;
+import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
@@ -36,6 +37,7 @@ import org.web3j.utils.Convert;
 import java.io.Console;
 import java.io.File;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.Provider;
@@ -58,6 +60,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.ArrayIntrinsicsKt;
 
 //import com.onehilltech.promises.BuildConfig;
 //import com.onehilltech.promises.*;
@@ -254,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
        // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
-        web3 = Web3j.build(new HttpService("HTTP://172.16.4.8:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.1.19:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -447,8 +450,10 @@ public class MainActivity extends AppCompatActivity {
             });
 
             String txHash = receipt.get().getTransactionHash();
+          //  TransactionReceipt recept = receipt.get();
+          //  event = recept.
             //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
-            Log.d("txHash", "createMultipleMultisigWallet RESULT: "+txHash);
+            Log.d("txHash", "createMultipleMultisigWallet RESULT HASH: "+txHash);
         } catch (Exception e) {
             // Log.d("tx hash", "txhash"+txHash);
             Log.e("tx exeption", "createMultipleMultisigWallet Transaction fails:",e);
@@ -505,9 +510,19 @@ public class MainActivity extends AppCompatActivity {
             List log = receipt.get().getLogs();
 
             List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get());
+            Object raw_event = response.get(0);
+            get_log = log.get()
 
-            Log.d("event_response", "event_response: " +response);
+            List<Type> args = FunctionReturnDecoder.decode(
+                    log.getData(), my_event.getParameters());
+            System.out.println("Seller : "+args(0).getValue());
+            System.out.println("Price  : "+args(1).getValue());
 
+
+
+            Log.d("event_response", "event_Human_registred_response: " +response);
+            Log.d("raw_event_single", "Human registred event:" + raw_event);
+            Log.d("event_value_JID", "wallet registred with JID: " + event_value);
 
 
 
