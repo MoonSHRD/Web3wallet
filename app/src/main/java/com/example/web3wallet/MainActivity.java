@@ -16,6 +16,8 @@ import com.example.web3wallet.ui.main.MainFragment;
 import com.onehilltech.promises.Promise;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.web3j.abi.EventValues;
+import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
@@ -34,6 +36,8 @@ import org.web3j.utils.Convert;
 
 import java.io.Console;
 import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.Provider;
@@ -56,6 +60,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.ArrayIntrinsicsKt;
 
 //import com.onehilltech.promises.BuildConfig;
 //import com.onehilltech.promises.*;
@@ -252,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
        // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
-        web3 = Web3j.build(new HttpService("HTTP://172.16.4.8:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.0.227:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -404,6 +409,8 @@ public class MainActivity extends AppCompatActivity {
 
         String txHash = createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
 
+
+
         return txHash;
     }
 
@@ -421,6 +428,7 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    // Main function to create Standard multisignature wallet
     public void createMultisigWal(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
 
@@ -440,10 +448,12 @@ public class MainActivity extends AppCompatActivity {
 
                 return null;
             });
-            
+
             String txHash = receipt.get().getTransactionHash();
+          //  TransactionReceipt recept = receipt.get();
+          //  event = recept.
             //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
-            Log.d("txHash", "createMultipleMultisigWallet RESULT: "+txHash);
+            Log.d("txHash", "createMultipleMultisigWallet RESULT HASH: "+txHash);
         } catch (Exception e) {
             // Log.d("tx hash", "txhash"+txHash);
             Log.e("tx exeption", "createMultipleMultisigWallet Transaction fails:",e);
@@ -452,6 +462,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Main function to create Simple Multisignature wallet with 2fa and replacer already setted at factory contract
     public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
        // TransactionReceipt recept;
@@ -469,7 +480,21 @@ public class MainActivity extends AppCompatActivity {
             receipt.thenAccept(transactionReceipt -> {
                 // get tx receipt only if successful
                 String txHash = transactionReceipt.getTransactionHash(); // can play with that
-               // vtxHash = txHash;
+
+               // EventValues eventValues = kns.getRegistredHumanEvents(transactionReceipt);
+                List eventResponseHuman = kns.getRegistredHumanEvents(transactionReceipt);
+
+
+
+
+                Log.d("event_values_human", "event_response: " + eventResponseHuman);
+
+
+                List eventValues = kns.getRegistredEvents(transactionReceipt);
+                Log.d("event_values", "event_values: " + eventValues);
+
+
+
                 Log.d("receipt", "receipt"+transactionReceipt);
                 Log.d("txhash", "txhash:" +txHash);
 
@@ -482,7 +507,26 @@ public class MainActivity extends AppCompatActivity {
 
             String txHash = receipt.get().getTransactionHash();
             vtxHash = txHash;
+            List log = receipt.get().getLogs();
+
+            List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get());
+
+            String JID_responce = response.get(0).JID;
+            String wallet_responce = response.get(0).wallet;
+            String telephone_responce = response.get(0).tel;
+            String prime_owner_responce = response.get(0).prime_owner;
+
+
+
+
+            Log.d("event_response", "event_Human_registred_response: " +response);
+            Log.d("event_values", "event values: " + JID_responce + " " + telephone_responce + " " + prime_owner_responce + " " + wallet_responce);
+            Log.d("resultat", "new wallet address is: " + wallet_responce);
+
+
+
             Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
+            Log.d("events logs", "event_logs:" +log);
         } catch (Exception e) {
             Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
         }
@@ -533,7 +577,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    // return address of wallet by JID
+    /*
+    public String getWalletByJid(String JID) {
 
 
+    }
+*/
 
 }
