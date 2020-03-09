@@ -511,8 +511,6 @@ public class MainActivity extends AppCompatActivity {
 
             List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get());
 
-            Object raw_result = response.get(0);
-
             String JID_responce = response.get(0).JID;
             String wallet_responce = response.get(0).wallet;
             String telephone_responce = response.get(0).tel;
