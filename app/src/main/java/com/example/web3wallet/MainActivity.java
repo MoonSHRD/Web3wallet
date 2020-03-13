@@ -28,6 +28,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.TransactionManager;
+import org.web3j.tx.Transfer;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
@@ -80,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
     private String fileName;
 
     private Web3j web3;
-    private Promise p;
+   // private Promise p;
    // private Rx
-    private Credentials credentials;
+    public Credentials credentials;
 
     private KNS kns;
     private SuperFactory superfactory;
@@ -257,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
        // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
-        web3 = Web3j.build(new HttpService("HTTP://192.168.0.227:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.1.3:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -293,6 +294,27 @@ public class MainActivity extends AppCompatActivity {
         String strBalance = String.valueOf(balance);
 
         return strBalance;
+
+    }
+
+    /*  CALLS FROM UI HERE */
+
+    public void createSimpleMultisigWalletTestView(View v) {
+        createSimpleMultisigWalletTest();
+    }
+
+    public void createMultipleMultisigWalTestView(View v) {
+        createMultisigWalTest();
+    }
+
+    public void sendMoneyView(View v) {
+        EditText eAddressTo = (EditText) findViewById(R.id.sendToInput);
+        EditText eAmount = (EditText) findViewById(R.id.amountTo);
+
+        String addressTo = eAddressTo.getText().toString();
+        Float amountTo = Float.valueOf(eAmount.getText().toString());
+
+        SendEtherToAddress(addressTo,amountTo);
 
     }
 
@@ -414,8 +436,7 @@ public class MainActivity extends AppCompatActivity {
         return txHash;
     }
 
-    //FIXME: function createMultisigWallet with multiple owners
-
+    // function createMultisigWallet with multiple owners
     public Void createMultisigWalTest() {
 
         String _owner = getMyAddress();
@@ -428,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    // Main function to create Standard multisignature wallet
+    // Main function to create (Register) Standard MULTISignature wallet
     public void createMultisigWal(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
 
@@ -462,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Main function to create Simple Multisignature wallet with 2fa and replacer already setted at factory contract
+    // Main function to create (Register) Simple Multisignature wallet with 2fa and replacer already setted at factory contract
     public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
 
        // TransactionReceipt recept;
@@ -536,13 +557,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void createSimpleMultisigWalletTestView(View v) {
-        createSimpleMultisigWalletTest();
-    }
 
-    public void createMultipleMultisigWalTestView(View v) {
-        createMultisigWalTest();
-    }
 
 
     // For testing purposes
@@ -577,12 +592,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // return address of wallet by JID
-    /*
-    public String getWalletByJid(String JID) {
 
+
+    // Send Funds to address
+    public void SendEtherToAddress(String recepient, Float amount ) {   //FIXME : check work with float numbers conversion to decimal
+
+       // credentials = WalletUtils.loadCredentials(password, walletDir);
+
+        try {
+            CompletableFuture<TransactionReceipt> receipt = Transfer.sendFunds(web3, credentials, recepient, BigDecimal.valueOf(amount), Convert.Unit.ETHER).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash();
+                Log.d("txhash", "txhash for send funds: " + txHash);
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+
+            });
+        } catch (Exception e) {
+            Log.e("tx exemption", "failed to transfer funds:" + e);
+        }
 
     }
-*/
 
 }
