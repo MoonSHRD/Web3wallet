@@ -118,8 +118,9 @@
             android:id="@+id/sendTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="29dp"
-            android:layout_marginTop="197dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="252dp"
+            android:onClick="sendMoneyView"
             android:text="Send"
             app:layout_constraintStart_toEndOf="@+id/sendToInput"
             app:layout_constraintTop_toBottomOf="@+id/loadWallet" />
@@ -134,6 +135,40 @@
             android:text="refresh"
             app:layout_constraintStart_toEndOf="@+id/balanceHint"
             app:layout_constraintTop_toBottomOf="@+id/editPass" />
+
+        <Button
+            android:id="@+id/buttonMSW"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="72dp"
+            android:onClick="createSimpleMultisigWalletTestView"
+            android:text="CreateMultiSig test"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sendToInput" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="32dp"
+            android:onClick="createMultipleMultisigWalTestView"
+            android:text="create Multi wallet test"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonMSW" />
+
+        <EditText
+            android:id="@+id/amountTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:ems="10"
+            android:hint="amount to send"
+            android:inputType="none|numberDecimal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sendToInput" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
