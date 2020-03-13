@@ -22,6 +22,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.NetVersion;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -258,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
        // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
-        web3 = Web3j.build(new HttpService("HTTP://192.168.1.3:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.43.39:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -595,7 +596,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Send Funds to address
-    public void SendEtherToAddress(String recepient, Float amount ) {   //FIXME : check work with float numbers conversion to decimal
+    public void SendEtherToAddress(String recepient, Float amount ) {
 
        // credentials = WalletUtils.loadCredentials(password, walletDir);
 
@@ -615,5 +616,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public String GetWalletByJid(String JID) {
+        RemoteCall<String> WalletInstance = kns.GetWalletByJid(JID);
+        return WalletInstance.toString();
+    }
+
+    public String GetWalletByTel(String telephone) {
+        RemoteCall<String> WalletInstance = kns.GetWalletByTel(telephone);
+        return WalletInstance.toString();
+    }
+    
 
 }
