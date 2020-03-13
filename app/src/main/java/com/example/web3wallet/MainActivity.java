@@ -297,6 +297,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*  CALLS FROM UI HERE */
+
+    public void createSimpleMultisigWalletTestView(View v) {
+        createSimpleMultisigWalletTest();
+    }
+
+    public void createMultipleMultisigWalTestView(View v) {
+        createMultisigWalTest();
+    }
+
+    public void sendMoneyView(View v) {
+        EditText eAddressTo = (EditText) findViewById(R.id.sendToInput);
+        EditText eAmount = (EditText) findViewById(R.id.amountTo);
+
+        String addressTo = eAddressTo.getText().toString();
+        Float amountTo = Float.valueOf(eAmount.getText().toString());
+
+        SendEtherToAddress(addressTo,amountTo);
+
+    }
+
     public void showBalance(View v) {
         String balance = getBalance();
 
@@ -536,13 +557,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void createSimpleMultisigWalletTestView(View v) {
-        createSimpleMultisigWalletTest();
-    }
 
-    public void createMultipleMultisigWalTestView(View v) {
-        createMultisigWalTest();
-    }
 
 
     // For testing purposes
@@ -580,7 +595,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Send Funds to address
-    public void SendEtherToAddress(String recepient, Integer amount ) {
+    public void SendEtherToAddress(String recepient, Float amount ) {   //FIXME : check work with float numbers conversion to decimal
 
        // credentials = WalletUtils.loadCredentials(password, walletDir);
 
