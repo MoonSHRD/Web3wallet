@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Main function to create (Register) Simple Multisignature wallet with 2fa and replacer already setted at factory contract
-    public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
+    public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {  //TODO: refactor this as main register wallet function, cleanup others
 
        // TransactionReceipt recept;
 
@@ -617,15 +617,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public String GetWalletByJid(String JID) {
+    public String GetWalletByJid(String JID) {   // TODO: check
         RemoteCall<String> WalletInstance = kns.GetWalletByJid(JID);
         return WalletInstance.toString();
     }
 
-    public String GetWalletByTel(String telephone) {
+    public String GetWalletByTel(String telephone) {   // TODO: check
         RemoteCall<String> WalletInstance = kns.GetWalletByTel(telephone);
         return WalletInstance.toString();
     }
-    
+
+
+
 
 }
