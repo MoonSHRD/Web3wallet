@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     public static KNS kns;
     public static SuperFactory superfactory;
     public static TicketFactory721 ticketfactory;
+    public Ticket721 ticket;
 
     public static String kns_address;
     public static String sup_factory_address;
@@ -420,6 +421,7 @@ public class MainActivity extends AppCompatActivity {
 
         superfactory = SuperFactory.load(sup_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
         ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+        //ticket = Ticket721.
 
         // Check
         Log.d("instance_address", "superfactory address:"+superfactory.getContractAddress());

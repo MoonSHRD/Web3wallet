@@ -18,6 +18,9 @@ import static com.example.web3wallet.MainActivity.ticketfactory;
 
 public class BuyTicketActivity extends AppCompatActivity {
 
+
+    public Ticket721 ticket;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +39,15 @@ public class BuyTicketActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    public void setupTicketContract() {
+       // RemoteCall<String> ticket_template_address = ticketfactory
+    }
 
     public void getTicketSale(String event_jid){
 
         RemoteCall<BigInteger> event_id = ticketfactory.getEventIdByJid(event_jid);
-        
+
+
 
     }
 
