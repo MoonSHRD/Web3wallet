@@ -79,6 +79,7 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
                 // vtxHash = txHash;
                 Log.d("receipt", "receipt"+transactionReceipt);
                 Log.d("txhash", "txhash:" +txHash);
+
             }).exceptionally(transactionReceipt -> {
 
                 return null;

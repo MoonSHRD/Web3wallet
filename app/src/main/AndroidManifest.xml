@@ -15,6 +15,15 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".BuyTicketActivity"
+            android:label="@string/title_activity_buy_ticket"
+            android:parentActivityName=".TicketGeneralActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.web3wallet.TicketGeneralActivity" />
+        </activity>
+        <activity
             android:name=".ManageTicketSaleActivity"
             android:label="@string/title_activity_manage_ticket_sale"
             android:parentActivityName=".TicketGeneralActivity"
