@@ -14,7 +14,11 @@ import org.web3j.protocol.core.RemoteCall;
 
 import java.math.BigInteger;
 
+import static com.example.web3wallet.MainActivity.CUSTOM_GAS_LIMIT;
+import static com.example.web3wallet.MainActivity.CUSTOM_GAS_PRICE;
+import static com.example.web3wallet.MainActivity.credentials;
 import static com.example.web3wallet.MainActivity.ticketfactory;
+import static com.example.web3wallet.MainActivity.web3;
 
 public class BuyTicketActivity extends AppCompatActivity {
 
@@ -40,13 +44,16 @@ public class BuyTicketActivity extends AppCompatActivity {
     }
 
     public void setupTicketContract() {
-       // RemoteCall<String> ticket_template_address = ticketfactory
+        RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();
+        String ticket_address = ticket_template_address.toString();
+        ticket = Ticket721.load(ticket_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+
     }
 
     public void getTicketSale(String event_jid){
 
         RemoteCall<BigInteger> event_id = ticketfactory.getEventIdByJid(event_jid);
-
+        
 
 
     }

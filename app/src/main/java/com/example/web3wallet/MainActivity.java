@@ -102,10 +102,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     // custom gasprice
-    private static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();  // FIXME
+    public static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();  // FIXME
 
   //  private static final BigInteger CUSTOM_GAS_LIMIT = Convert.toWei("6721975", Convert.Unit.GWEI).toBigInteger();
-  private static final BigInteger CUSTOM_GAS_LIMIT = BigInteger.valueOf(6_000_000);
+    public static final BigInteger CUSTOM_GAS_LIMIT = BigInteger.valueOf(7_000_000);
 
 
 
