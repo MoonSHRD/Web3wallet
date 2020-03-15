@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 //import android.support.v7.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -81,14 +82,14 @@ public class MainActivity extends AppCompatActivity {
     private File walletDir;
     private String fileName;
 
-    private Web3j web3;
+    public static Web3j web3;
    // private Promise p;
    // private Rx
-    public Credentials credentials;
+    public static Credentials credentials;
 
-    private KNS kns;
-    private SuperFactory superfactory;
-    private TicketFactory721 ticketfactory;
+    public static KNS kns;
+    public static SuperFactory superfactory;
+    public static TicketFactory721 ticketfactory;
 
     public static String kns_address;
     public static String sup_factory_address;
@@ -307,6 +308,11 @@ public class MainActivity extends AppCompatActivity {
     public void createMultipleMultisigWalTestView(View v) {
         createMultisigWalTest();
     }
+
+    public void StartGeneralTicketActivity(View v) {
+        Intent intent = new Intent(this,TicketGeneralActivity.class);
+        startActivity(intent);
+    };
 
     public void sendMoneyView(View v) {
         EditText eAddressTo = (EditText) findViewById(R.id.sendToInput);

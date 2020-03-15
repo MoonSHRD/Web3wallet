@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Web3wallet</string>
+    <string name="title_activity_ticket_general">TicketGeneralActivity</string>
+    <string name="title_activity_manage_ticket_sale">ManageTicketSaleActivity</string>
 </resources>

@@ -12,12 +12,30 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ManageTicketSaleActivity"
+            android:label="@string/title_activity_manage_ticket_sale"
+            android:parentActivityName=".TicketGeneralActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.web3wallet.TicketGeneralActivity" />
+        </activity>
+        <activity
+            android:name=".TicketGeneralActivity"
+            android:label="@string/title_activity_ticket_general"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.web3wallet.MainActivity" />
+        </activity>
 
         <service
             android:name=".EthConnectIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
