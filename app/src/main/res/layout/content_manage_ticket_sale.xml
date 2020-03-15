@@ -8,4 +8,26 @@
     tools:context=".ManageTicketSaleActivity"
     tools:showIn="@layout/activity_manage_ticket_sale">
 
+    <EditText
+        android:id="@+id/TicketPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:hint="input price"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/createSale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="39dp"
+        android:onClick="createSaleViewTest"
+        android:text="CreateSale"
+        app:layout_constraintStart_toEndOf="@+id/TicketPrice"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

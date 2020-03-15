@@ -8,9 +8,24 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.concurrent.CompletableFuture;
+
+import static com.example.web3wallet.MainActivity.credentials;
+import static com.example.web3wallet.MainActivity.superfactory;
+import static com.example.web3wallet.MainActivity.ticketfactory;
 
 public class ManageTicketSaleActivity extends AppCompatActivity {
+
+ //   public TicketFactory721 ticketfactory;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +45,50 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+/*
+    public void setupContracts() {
+        ticketfactory = MainActivity.ticketfactory;
+    }
+*/
+
+    public void createSaleViewTest(View v) {
+        EditText ePrice = (EditText) findViewById(R.id.TicketPrice);
+        String sPrice = ePrice.getText().toString();
+        Integer iPrice = Integer.parseInt(sPrice);
+        BigInteger price = BigInteger.valueOf(iPrice);
+
+        // for test
+        String event_JID = "mutabor@conference.moonshard.tech";
+        createTicketSale(price,event_JID);
+    }
+
+
+
+    public void createTicketSale(BigInteger price, String event_JID) {
+
+
+        String organizer_address = credentials.getAddress();
+
+
+
+        try {
+            CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash(); // can play with that
+                // vtxHash = txHash;
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+            });
+        } catch (Exception e) {
+            // Log.d("tx hash", "txhash"+txHash);
+            Log.e("tx exeption", "Sale creation fails:",e);
+
+        }
+    }
 
 
 }

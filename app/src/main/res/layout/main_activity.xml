@@ -151,8 +151,8 @@
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:onClick="createMultipleMultisigWalTestView"
             android:text="create Multi wallet test"
             app:layout_constraintStart_toStartOf="parent"
@@ -171,14 +171,15 @@
             app:layout_constraintTop_toBottomOf="@+id/sendToInput" />
 
         <Button
-            android:id="@+id/ticket_start"
-            android:layout_width="208dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="26dp"
+            android:id="@+id/goToTickets"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="76dp"
+            android:layout_marginTop="96dp"
             android:onClick="StartGeneralTicketActivity"
             android:text="Go to tickets"
-            app:layout_constraintTop_toBottomOf="@+id/button2"
-            tools:layout_editor_absoluteX="21dp" />
+            app:layout_constraintStart_toEndOf="@+id/refreshBalance"
+            app:layout_constraintTop_toBottomOf="@+id/loadWallet" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
