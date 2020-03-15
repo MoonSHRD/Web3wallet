@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 
 import org.web3j.protocol.core.RemoteCall;
@@ -52,8 +53,10 @@ public class BuyTicketActivity extends AppCompatActivity {
 
     public void getTicketSale(String event_jid){
 
-        RemoteCall<BigInteger> event_id = ticketfactory.getEventIdByJid(event_jid);
-        
+        RemoteCall<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid);
+
+        BigInteger event_id = event_id_call.send();
+        RemoteCall<String[]> SaleInstances = ticket.eventsales(event_id);  // FIXME: Missing getter for eventsales at Ticket721.sol. 
 
 
     }
