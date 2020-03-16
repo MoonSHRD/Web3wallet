@@ -57,13 +57,28 @@ public class BuyTicketActivity extends AppCompatActivity {
     public void getInfo(View v) {
         EditText eJID = (EditText) findViewById(R.id.event_jid);
         String JID = eJID.getText().toString();
-        String[] SaleInstances = getTicketSale(JID);
-        String ItemSaleAddress = SaleInstances[0];
-        TicketSale721 ItemSaleInstance = getSaleInstance(ItemSaleAddress);
+        String[] SaleInstances = getTicketSale(JID);    // Getting every items on sale
+        String ItemSaleAddress = SaleInstances[0];      // Get address of particular item sale
+        TicketSale721 ItemSaleInstance = getSaleInstance(ItemSaleAddress);  // Get instance of particular item sale
         BigInteger price_wei = getSalePriceInfo(ItemSaleInstance);
         // FIXME : convert price from wei (?)
         TextView sPrice = (TextView) findViewById(R.id.event_price);
         sPrice.setText(price_wei.toString());
+    }
+
+    public void buyTicketView(View v) {
+        EditText eJID = (EditText) findViewById(R.id.event_jid); // FIXME: fix this
+        String JID = eJID.getText().toString();
+        String[] SaleInstances = getTicketSale(JID);
+        String ItemSaleAddress = SaleInstances[0];
+        TicketSale721 ItemSaleInstance = getSaleInstance(ItemSaleAddress);
+
+        EditText eAmount = (EditText) findViewById(R.id.ticket_amount);
+        String sAmount = eAmount.getText().toString();
+        int amount_int = Integer.parseInt(sAmount);
+        BigInteger amount = BigInteger.valueOf(amount_int);
+
+        BuyTicket(ItemSaleInstance,amount);
     }
 
 
