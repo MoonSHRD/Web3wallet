@@ -26,6 +26,7 @@ public class BuyTicketActivity extends AppCompatActivity {
 
 
     public Ticket721 ticket;
+    public TicketSale721 ticket_sale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,14 @@ public class BuyTicketActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
+    public TicketSale721 getSaleInstance(String sale_address) {
+        ticket_sale = TicketSale721.load(sale_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+        return ticket_sale;
+    }
+
+    
 
 
 }
