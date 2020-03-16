@@ -54,7 +54,7 @@ public class BuyTicketActivity extends AppCompatActivity {
 
     public String[] getTicketSale(String event_jid){
 
-        String[] result;
+      //  String[] result;
         try {
             RemoteCall<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid);
 
@@ -71,6 +71,18 @@ public class BuyTicketActivity extends AppCompatActivity {
             return null;
         }
        // return result;
+    }
+
+    public BigInteger getEventIdByJid(String event_jid) {
+        try {
+            RemoteCall<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid);
+
+            BigInteger event_id = event_id_call.send();
+            return event_id;
+        } catch (Exception e) {
+            Log.e("error","error in transaction remote call: " + e);
+            return null;
+        }
     }
 
 
