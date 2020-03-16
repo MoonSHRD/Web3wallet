@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.View;
 
 import org.web3j.protocol.core.RemoteCall;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.example.web3wallet.MainActivity.CUSTOM_GAS_LIMIT;
 import static com.example.web3wallet.MainActivity.CUSTOM_GAS_PRICE;
@@ -92,7 +94,36 @@ public class BuyTicketActivity extends AppCompatActivity {
         return ticket_sale;
     }
 
-    
+   //
+    public BigInteger getSalePriceInfo(TicketSale721 sale_instance) {
+        try {
+            RemoteCall<BigInteger> price_wei_call = sale_instance.rate();
+            BigInteger price_wei = price_wei_call.send();
+            return price_wei;
+        } catch (Exception e) {
+            Log.e("tx-error","error in tx: " + e);
+            return null;
+        }
+    }
+
+
+    public void BuyTicket(TicketSale721 sale_instance, BigInteger amount) {
+
+        BigInteger price_wei = getSalePriceInfo(sale_instance);
+        BigInteger sum = amount.multiply(price_wei);
+
+        CompletableFuture<TransactionReceipt> receipt = sale_instance.buyTicket(credentials.getAddress(),sum).sendAsync();
+        receipt.thenAccept(transactionReceipt -> {
+            // get tx receipt only if successful
+            String txHash = transactionReceipt.getTransactionHash(); // can play with that
+            // vtxHash = txHash;
+            Log.d("receipt", "receipt"+transactionReceipt);
+            Log.d("txhash", "txhash:" +txHash);
+        }).exceptionally(transactionReceipt -> {
+            Log.e("tx error", "tx error when BUY TICKE: " + transactionReceipt);
+            return null;
+        });
+    }
 
 
 }
