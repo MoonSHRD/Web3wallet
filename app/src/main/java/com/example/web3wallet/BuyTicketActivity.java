@@ -14,6 +14,7 @@ import android.view.View;
 import org.web3j.protocol.core.RemoteCall;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import static com.example.web3wallet.MainActivity.CUSTOM_GAS_LIMIT;
 import static com.example.web3wallet.MainActivity.CUSTOM_GAS_PRICE;
@@ -51,14 +52,25 @@ public class BuyTicketActivity extends AppCompatActivity {
 
     }
 
-    public void getTicketSale(String event_jid){
+    public String[] getTicketSale(String event_jid){
 
-        RemoteCall<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid);
+        String[] result;
+        try {
+            RemoteCall<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid);
 
-        BigInteger event_id = event_id_call.send();
-        RemoteCall<String[]> SaleInstances = ticket.eventsales(event_id);  // FIXME: Missing getter for eventsales at Ticket721.sol. 
-
-
+            BigInteger event_id = event_id_call.send();
+            //RemoteCall<String[]> SaleInstances = ticket.eventsales(event_id);  // FIXME: Missing getter for eventsales at Ticket721.sol.
+            RemoteCall<List> SaleInstancesCall = ticket.getTicketSales(event_id);
+            List SaleInstancesList = SaleInstancesCall.send();
+            String[] SaleInstances = new String[SaleInstancesList.size()];
+            SaleInstancesList.toArray(SaleInstances);
+            return SaleInstances;
+           // result = SaleInstances;
+        } catch (Exception e) {
+            Log.e("error","error in transaction remote call: " + e);
+            return null;
+        }
+       // return result;
     }
 
 
