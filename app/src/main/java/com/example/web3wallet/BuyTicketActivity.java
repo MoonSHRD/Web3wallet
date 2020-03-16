@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -46,7 +48,25 @@ public class BuyTicketActivity extends AppCompatActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        setupTicketContract();
     }
+
+
+    public void getInfo(View v) {
+        EditText eJID = (EditText) findViewById(R.id.event_jid);
+        String JID = eJID.getText().toString();
+        String[] SaleInstances = getTicketSale(JID);
+        String ItemSaleAddress = SaleInstances[0];
+        TicketSale721 ItemSaleInstance = getSaleInstance(ItemSaleAddress);
+        BigInteger price_wei = getSalePriceInfo(ItemSaleInstance);
+        // FIXME : convert price from wei (?)
+        TextView sPrice = (TextView) findViewById(R.id.event_price);
+        sPrice.setText(price_wei.toString());
+    }
+
+
 
     public void setupTicketContract() {
         RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();
@@ -124,6 +144,7 @@ public class BuyTicketActivity extends AppCompatActivity {
             return null;
         });
     }
+
 
 
 }

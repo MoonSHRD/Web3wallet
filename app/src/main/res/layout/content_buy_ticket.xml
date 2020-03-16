@@ -9,7 +9,7 @@
     tools:showIn="@layout/activity_buy_ticket">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/event_jid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -27,18 +27,18 @@
         android:layout_marginStart="25dp"
         android:layout_marginTop="42dp"
         android:text="get sale"
-        app:layout_constraintStart_toEndOf="@+id/editText"
+        app:layout_constraintStart_toEndOf="@+id/event_jid"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/event_jid_get"
+        android:id="@+id/event_id_get"
         android:layout_width="201dp"
         android:layout_height="18dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="41dp"
         android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/event_jid" />
 
     <TextView
         android:id="@+id/event_price"
@@ -48,7 +48,7 @@
         android:layout_marginTop="9dp"
         android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_jid_get" />
+        app:layout_constraintTop_toBottomOf="@+id/event_id_get" />
 
     <EditText
         android:id="@+id/ticket_amount"
