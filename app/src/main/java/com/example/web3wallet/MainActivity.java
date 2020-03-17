@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private String walletPath;
     private File walletDir;
     private String fileName;
-    public File walletFile;
+    public static File walletFile;
 
     public static Web3j web3;
    // private Promise p;
