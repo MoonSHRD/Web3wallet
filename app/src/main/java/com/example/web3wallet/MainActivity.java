@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private String walletPath;
     private File walletDir;
     private String fileName;
+    public File walletFile;
 
     public static Web3j web3;
    // private Promise p;
@@ -122,11 +123,13 @@ public class MainActivity extends AppCompatActivity {
 
         connectToLocalNetwork();
 
-        createDummyKey();
-        loadDummyKey();
-
-
-
+        if(walletFile == null) {
+            createDummyKey();
+            loadDummyKey();
+        }
+        else {
+            loadDummyKey();
+        }
 
         setupContracts();
       //  checkContractAddresses();
@@ -172,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         try{
             fileName =  WalletUtils.generateLightNewWalletFile(password,walletDir);
             String filepath = walletPath + "/" + fileName;
+            walletFile = new File(filepath);
             toastAsync("Wallet generated" + filepath);
         }
         catch (Exception e){
@@ -181,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     // load dummy key with default password
     public void loadDummyKey() {
+        password = "1984";
         try {
             String path = walletPath + "/" +fileName;
             walletDir = new File(path);
