@@ -12,6 +12,8 @@ import android.view.View;
 
 import org.web3j.protocol.core.RemoteCall;
 
+import java.util.List;
+
 import static com.example.web3wallet.MainActivity.CUSTOM_GAS_LIMIT;
 import static com.example.web3wallet.MainActivity.CUSTOM_GAS_PRICE;
 import static com.example.web3wallet.MainActivity.credentials;
@@ -47,10 +49,19 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
         ticket = Ticket721.load(ticket_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
     }
 
-    /*
-    public void getMyTickets(String owner) {
-        RemoteCall tickets = ticket.
+
+    public Integer[] getMyTickets(String owner) {
+        try {
+            RemoteCall<List> tickets_call = ticket.getTicketByOwner(owner);
+            List tickets_list = tickets_call.send();
+            Integer[] TicketsArray = new Integer[tickets_list.size()];
+            tickets_list.toArray(TicketsArray);
+            return TicketsArray;
+        } catch (Exception e) {
+            return null;
+        }
+
     }
-     */
-    
+
+
 }
