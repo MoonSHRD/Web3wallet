@@ -85,8 +85,15 @@ public class BuyTicketActivity extends AppCompatActivity {
 
     public void SetupTicketContract() {
         try {
-            RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();   //FIXME: change to async send.  //TODO: change to async send
-            String ticket_address = ticket_template_address.send();
+
+
+         //   RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress().send();   //FIXME: change to async send.  //TODO: change to async send
+          CompletableFuture <String> ticket_template_address = ticketfactory.getTicketTemplateAddress().sendAsync();
+            String ticket_address = ticket_template_address.get();
+
+
+
+
             ticket = Ticket721.load(ticket_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
         } catch(Exception e) {
             Log.e("eth_call_fail","error during ticket contract setup: ", e);
