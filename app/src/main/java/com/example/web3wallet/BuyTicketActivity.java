@@ -15,7 +15,9 @@ import android.widget.TextView;
 
 import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.utils.Convert;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -60,7 +62,7 @@ public class BuyTicketActivity extends AppCompatActivity {
         String[] SaleInstances = getTicketSale(JID);    // Getting every items on sale
         String ItemSaleAddress = SaleInstances[0];      // Get address of particular item sale
         TicketSale721 ItemSaleInstance = getSaleInstance(ItemSaleAddress);  // Get instance of particular item sale
-        BigInteger price_wei = getSalePriceInfo(ItemSaleInstance);
+        BigDecimal price_wei = getSalePriceInfo(ItemSaleInstance);
         // FIXME : convert price from wei (?)
         TextView sPrice = (TextView) findViewById(R.id.event_price);
         sPrice.setText(price_wei.toString());
@@ -77,8 +79,9 @@ public class BuyTicketActivity extends AppCompatActivity {
         String sAmount = eAmount.getText().toString();
         int amount_int = Integer.parseInt(sAmount);
         BigInteger amount = BigInteger.valueOf(amount_int);
+        BigDecimal amount_dec = new BigDecimal(amount);
 
-        BuyTicket(ItemSaleInstance,amount);
+        BuyTicket(ItemSaleInstance,amount_dec);
     }
 
 
@@ -132,11 +135,13 @@ public class BuyTicketActivity extends AppCompatActivity {
     }
 
    //
-    public BigInteger getSalePriceInfo(TicketSale721 sale_instance) {
+    public BigDecimal getSalePriceInfo(TicketSale721 sale_instance) {
         try {
             CompletableFuture<BigInteger> price_wei_call = sale_instance.rate().sendAsync();
-            BigInteger price_wei = price_wei_call.get();
-            return price_wei;
+            BigInteger price_wei_int = price_wei_call.get();
+            BigDecimal price_wei = new BigDecimal(price_wei_int);
+            BigDecimal price = Convert.fromWei(price_wei, Convert.Unit.ETHER);
+            return price;
         } catch (Exception e) {
             Log.e("tx-error","error in tx: " + e);
             return null;
@@ -144,12 +149,13 @@ public class BuyTicketActivity extends AppCompatActivity {
     }
 
 
-    public void BuyTicket(TicketSale721 sale_instance, BigInteger amount) {
+    public void BuyTicket(TicketSale721 sale_instance, BigDecimal amount) {
 
-        BigInteger price_wei = getSalePriceInfo(sale_instance);
-        BigInteger sum = amount.multiply(price_wei);
+        BigDecimal price_wei = getSalePriceInfo(sale_instance);
+        BigDecimal sum = amount.multiply(price_wei);
+        BigInteger sum_int = sum.toBigInteger();
 
-        CompletableFuture<TransactionReceipt> receipt = sale_instance.buyTicket(credentials.getAddress(),sum).sendAsync();
+        CompletableFuture<TransactionReceipt> receipt = sale_instance.buyTicket(credentials.getAddress(),sum_int).sendAsync();
         receipt.thenAccept(transactionReceipt -> {
             // get tx receipt only if successful
             String txHash = transactionReceipt.getTransactionHash(); // can play with that
