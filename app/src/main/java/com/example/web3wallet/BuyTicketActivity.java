@@ -103,8 +103,8 @@ public class BuyTicketActivity extends AppCompatActivity {
 
             BigInteger event_id = event_id_call.get();
             //RemoteCall<String[]> SaleInstances = ticket.eventsales(event_id);  // FIXME: Missing getter for eventsales at Ticket721.sol.
-            RemoteCall<List> SaleInstancesCall = ticket.getTicketSales(event_id);
-            List SaleInstancesList = SaleInstancesCall.send();
+            CompletableFuture<List> SaleInstancesCall = ticket.getTicketSales(event_id).sendAsync();
+            List SaleInstancesList = SaleInstancesCall.get();
             String[] SaleInstances = new String[SaleInstancesList.size()];
             SaleInstancesList.toArray(SaleInstances);
             return SaleInstances;
