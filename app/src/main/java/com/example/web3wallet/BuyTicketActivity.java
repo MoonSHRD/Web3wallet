@@ -85,7 +85,7 @@ public class BuyTicketActivity extends AppCompatActivity {
 
     public void SetupTicketContract() {
         try {
-            RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();
+            RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();   //FIXME: change to async send.  //TODO: change to async send
             String ticket_address = ticket_template_address.send();
             ticket = Ticket721.load(ticket_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
         } catch(Exception e) {
