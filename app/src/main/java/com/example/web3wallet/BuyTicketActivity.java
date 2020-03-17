@@ -151,7 +151,8 @@ public class BuyTicketActivity extends AppCompatActivity {
 
     public void BuyTicket(TicketSale721 sale_instance, BigDecimal amount) {
 
-        BigDecimal price_wei = getSalePriceInfo(sale_instance);
+        BigDecimal price = getSalePriceInfo(sale_instance);
+        BigDecimal price_wei = Convert.toWei(price, Convert.Unit.ETHER);
         BigDecimal sum = amount.multiply(price_wei);
         BigInteger sum_int = sum.toBigInteger();
 
@@ -163,7 +164,7 @@ public class BuyTicketActivity extends AppCompatActivity {
             Log.d("receipt", "receipt"+transactionReceipt);
             Log.d("txhash", "txhash:" +txHash);
         }).exceptionally(transactionReceipt -> {
-            Log.e("tx error", "tx error when BUY TICKE: " + transactionReceipt);
+            Log.e("tx error", "tx error when BUY TICKEt:  " + transactionReceipt);
             return null;
         });
     }
