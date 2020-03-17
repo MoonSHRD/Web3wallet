@@ -90,10 +90,6 @@ public class BuyTicketActivity extends AppCompatActivity {
          //   RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress().send();   //FIXME: change to async send.  //TODO: change to async send
           CompletableFuture <String> ticket_template_address = ticketfactory.getTicketTemplateAddress().sendAsync();
             String ticket_address = ticket_template_address.get();
-
-
-
-
             ticket = Ticket721.load(ticket_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
         } catch(Exception e) {
             Log.e("eth_call_fail","error during ticket contract setup: ", e);
@@ -102,31 +98,26 @@ public class BuyTicketActivity extends AppCompatActivity {
     }
 
     public String[] getTicketSale(String event_jid){
-
-      //  String[] result;
         try {
-            RemoteCall<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid);
+            CompletableFuture<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid).sendAsync();
 
-            BigInteger event_id = event_id_call.send();
+            BigInteger event_id = event_id_call.get();
             //RemoteCall<String[]> SaleInstances = ticket.eventsales(event_id);  // FIXME: Missing getter for eventsales at Ticket721.sol.
             RemoteCall<List> SaleInstancesCall = ticket.getTicketSales(event_id);
             List SaleInstancesList = SaleInstancesCall.send();
             String[] SaleInstances = new String[SaleInstancesList.size()];
             SaleInstancesList.toArray(SaleInstances);
             return SaleInstances;
-           // result = SaleInstances;
         } catch (Exception e) {
             Log.e("error","error in transaction remote call: " + e);
             return null;
         }
-       // return result;
     }
 
     public BigInteger getEventIdByJid(String event_jid) {
         try {
-            RemoteCall<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid);
-
-            BigInteger event_id = event_id_call.send();
+            CompletableFuture<BigInteger> event_id_call = ticketfactory.getEventIdByJid(event_jid).sendAsync();
+            BigInteger event_id = event_id_call.get();
             return event_id;
         } catch (Exception e) {
             Log.e("error","error in transaction remote call: " + e);
@@ -143,8 +134,8 @@ public class BuyTicketActivity extends AppCompatActivity {
    //
     public BigInteger getSalePriceInfo(TicketSale721 sale_instance) {
         try {
-            RemoteCall<BigInteger> price_wei_call = sale_instance.rate();
-            BigInteger price_wei = price_wei_call.send();
+            CompletableFuture<BigInteger> price_wei_call = sale_instance.rate().sendAsync();
+            BigInteger price_wei = price_wei_call.get();
             return price_wei;
         } catch (Exception e) {
             Log.e("tx-error","error in tx: " + e);
