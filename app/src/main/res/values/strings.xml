@@ -3,4 +3,5 @@
     <string name="title_activity_ticket_general">TicketGeneralActivity</string>
     <string name="title_activity_manage_ticket_sale">ManageTicketSaleActivity</string>
     <string name="title_activity_buy_ticket">BuyTicketActivity</string>
+    <string name="title_activity_manage_my_tickets">ManageMyTicketsActivity</string>
 </resources>

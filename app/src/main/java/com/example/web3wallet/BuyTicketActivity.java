@@ -50,7 +50,7 @@ public class BuyTicketActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        setupTicketContract();
+        SetupTicketContract();
     }
 
 
@@ -83,7 +83,7 @@ public class BuyTicketActivity extends AppCompatActivity {
 
 
 
-    public void setupTicketContract() {
+    public void SetupTicketContract() {
         RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();
         String ticket_address = ticket_template_address.toString();
         ticket = Ticket721.load(ticket_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
