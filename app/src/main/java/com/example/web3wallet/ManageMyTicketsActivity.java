@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 
 import org.web3j.protocol.core.RemoteCall;
@@ -56,6 +57,7 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
             List tickets_list = tickets_call.send();
             Integer[] TicketsArray = new Integer[tickets_list.size()];
             tickets_list.toArray(TicketsArray);
+            Log.d("tickets","first ticket in array:" + TicketsArray[0]);
             return TicketsArray;
         } catch (Exception e) {
             return null;
