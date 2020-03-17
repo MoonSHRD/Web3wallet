@@ -36,4 +36,9 @@ public class TicketGeneralActivity extends AppCompatActivity {
         startActivity(intent);
     };
 
+    public void startManageTicketsActivity(View v) {
+        Intent intent = new Intent(this,BuyTicketActivity.class);
+        startActivity(intent);
+    };
+
 }

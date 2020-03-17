@@ -24,6 +24,7 @@
         android:layout_height="67dp"
         android:layout_marginStart="29dp"
         android:layout_marginTop="34dp"
+        android:onClick="startManageTicketsActivity"
         android:text="Manage tickets"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/manageSaleBt" />

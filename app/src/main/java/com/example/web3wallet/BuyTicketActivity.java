@@ -84,9 +84,13 @@ public class BuyTicketActivity extends AppCompatActivity {
 
 
     public void SetupTicketContract() {
-        RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();
-        String ticket_address = ticket_template_address.toString();
-        ticket = Ticket721.load(ticket_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+        try {
+            RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();
+            String ticket_address = ticket_template_address.send();
+            ticket = Ticket721.load(ticket_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
+        } catch(Exception e) {
+            Log.e("eth_call_fail","error during ticket contract setup: ", e);
+        }
 
     }
 
