@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 //import android.support.v7.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -80,15 +81,17 @@ public class MainActivity extends AppCompatActivity {
     private String walletPath;
     private File walletDir;
     private String fileName;
+    public static File walletFile;
 
-    private Web3j web3;
+    public static Web3j web3;
    // private Promise p;
    // private Rx
-    public Credentials credentials;
+    public static Credentials credentials;
 
-    private KNS kns;
-    private SuperFactory superfactory;
-    private TicketFactory721 ticketfactory;
+    public static KNS kns;
+    public static SuperFactory superfactory;
+    public static TicketFactory721 ticketfactory;
+    public Ticket721 ticket;
 
     public static String kns_address;
     public static String sup_factory_address;
@@ -100,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     // custom gasprice
-    private static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();  // FIXME
+    public static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();  // FIXME
 
   //  private static final BigInteger CUSTOM_GAS_LIMIT = Convert.toWei("6721975", Convert.Unit.GWEI).toBigInteger();
-  private static final BigInteger CUSTOM_GAS_LIMIT = BigInteger.valueOf(6_000_000);
+    public static final BigInteger CUSTOM_GAS_LIMIT = BigInteger.valueOf(7_000_000);
 
 
 
@@ -120,11 +123,13 @@ public class MainActivity extends AppCompatActivity {
 
         connectToLocalNetwork();
 
-        createDummyKey();
-        loadDummyKey();
-
-
-
+        if(walletFile == null) {
+            createDummyKey();
+            loadDummyKey();
+        }
+        else {
+            loadDummyKey();
+        }
 
         setupContracts();
       //  checkContractAddresses();
@@ -170,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         try{
             fileName =  WalletUtils.generateLightNewWalletFile(password,walletDir);
             String filepath = walletPath + "/" + fileName;
+            walletFile = new File(filepath);
             toastAsync("Wallet generated" + filepath);
         }
         catch (Exception e){
@@ -179,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     // load dummy key with default password
     public void loadDummyKey() {
+        password = "1984";
         try {
             String path = walletPath + "/" +fileName;
             walletDir = new File(path);
@@ -259,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
        // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
-        web3 = Web3j.build(new HttpService("HTTP://192.168.43.39:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.1.3:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if(!clientVersion.hasError()){
@@ -307,6 +314,11 @@ public class MainActivity extends AppCompatActivity {
     public void createMultipleMultisigWalTestView(View v) {
         createMultisigWalTest();
     }
+
+    public void StartGeneralTicketActivity(View v) {
+        Intent intent = new Intent(this,TicketGeneralActivity.class);
+        startActivity(intent);
+    };
 
     public void sendMoneyView(View v) {
         EditText eAddressTo = (EditText) findViewById(R.id.sendToInput);
@@ -414,6 +426,7 @@ public class MainActivity extends AppCompatActivity {
 
         superfactory = SuperFactory.load(sup_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
         ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+        //ticket = Ticket721.
 
         // Check
         Log.d("instance_address", "superfactory address:"+superfactory.getContractAddress());

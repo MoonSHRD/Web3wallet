@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".BuyTicketActivity"
+    tools:showIn="@layout/activity_buy_ticket">
+
+    <EditText
+        android:id="@+id/event_jid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="45dp"
+        android:ems="10"
+        android:hint="input event jid"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/getSale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="42dp"
+        android:onClick="getInfo"
+        android:text="get sale"
+        app:layout_constraintStart_toEndOf="@+id/event_jid"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/event_id_get"
+        android:layout_width="201dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="41dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_jid" />
+
+    <TextView
+        android:id="@+id/event_price"
+        android:layout_width="202dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="9dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_id_get" />
+
+    <EditText
+        android:id="@+id/ticket_amount"
+        android:layout_width="209dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:hint="input amount to buy"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_price" />
+
+    <Button
+        android:id="@+id/buyTicket"
+        android:layout_width="132dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="108dp"
+        android:onClick="buyTicketView"
+        android:text="Buy"
+        app:layout_constraintStart_toEndOf="@+id/ticket_amount"
+        app:layout_constraintTop_toBottomOf="@+id/getSale" />
+</androidx.constraintlayout.widget.ConstraintLayout>
