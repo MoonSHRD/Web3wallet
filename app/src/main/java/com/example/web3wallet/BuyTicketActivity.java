@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.utils.Convert;
 
@@ -30,7 +29,6 @@ import static com.example.web3wallet.MainActivity.web3;
 
 public class BuyTicketActivity extends AppCompatActivity {
 
-
     public Ticket721 ticket;
     public TicketSale721 ticket_sale;
 
@@ -42,27 +40,21 @@ public class BuyTicketActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        //заменяем на лямбду
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         SetupTicketContract();
     }
 
-
     public void getInfo(View v) {
         EditText eJID = (EditText) findViewById(R.id.event_jid);
         String JID = eJID.getText().toString();
-        String[] SaleInstances = getTicketSale(JID);    // Getting every items on sale
-        String ItemSaleAddress = SaleInstances[0];      // Get address of particular item sale
-        TicketSale721 ItemSaleInstance = getSaleInstance(ItemSaleAddress);  // Get instance of particular item sale
-        BigDecimal price_wei = getSalePriceInfo(ItemSaleInstance);
+        String[] saleInstances = getTicketSale(JID);    // Getting every items on sale
+        String itemSaleAddress = saleInstances[0];      // Get address of particular item sale
+        TicketSale721 itemSaleInstance = getSaleInstance(itemSaleAddress);  // Get instance of particular item sale
+        BigDecimal price_wei = getSalePriceInfo(itemSaleInstance);
         // FIXME : convert price from wei (?)
         TextView sPrice = (TextView) findViewById(R.id.event_price);
         sPrice.setText(price_wei.toString());
@@ -71,9 +63,9 @@ public class BuyTicketActivity extends AppCompatActivity {
     public void buyTicketView(View v) {
         EditText eJID = (EditText) findViewById(R.id.event_jid); // FIXME: fix this
         String JID = eJID.getText().toString();
-        String[] SaleInstances = getTicketSale(JID);
-        String ItemSaleAddress = SaleInstances[0];
-        TicketSale721 ItemSaleInstance = getSaleInstance(ItemSaleAddress);
+        String[] saleInstances = getTicketSale(JID);
+        String itemSaleAddress = saleInstances[0];
+        TicketSale721 itemSaleInstance = getSaleInstance(itemSaleAddress);
 
         EditText eAmount = (EditText) findViewById(R.id.ticket_amount);
         String sAmount = eAmount.getText().toString();
@@ -81,7 +73,7 @@ public class BuyTicketActivity extends AppCompatActivity {
         BigInteger amount = BigInteger.valueOf(amount_int);
         BigDecimal amount_dec = new BigDecimal(amount);
 
-        BuyTicket(ItemSaleInstance,amount_dec);
+        buyTicket(itemSaleInstance,amount_dec);
     }
 
 
@@ -149,13 +141,14 @@ public class BuyTicketActivity extends AppCompatActivity {
     }
 
 
-    public void BuyTicket(TicketSale721 sale_instance, BigDecimal amount) {
-
+    public void buyTicket(TicketSale721 sale_instance, BigDecimal amount) {
         BigDecimal price = getSalePriceInfo(sale_instance);
         BigDecimal price_wei = Convert.toWei(price, Convert.Unit.ETHER);
         BigDecimal sum = amount.multiply(price_wei);
         BigInteger sum_int = sum.toBigInteger();
 
+
+        //вот эти вещи нельзя делать в активности,по хорошему нужно разделять на слои(юзаем архитектуру mvp or mvvm)
         CompletableFuture<TransactionReceipt> receipt = sale_instance.buyTicket(credentials.getAddress(),sum_int).sendAsync();
         receipt.thenAccept(transactionReceipt -> {
             // get tx receipt only if successful
@@ -168,7 +161,4 @@ public class BuyTicketActivity extends AppCompatActivity {
             return null;
         });
     }
-
-
-
 }

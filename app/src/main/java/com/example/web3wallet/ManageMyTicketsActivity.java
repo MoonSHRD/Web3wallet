@@ -33,23 +33,16 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
 
     public void setupTicket() {
         RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress();
         String ticket_address = ticket_template_address.toString();
         ticket = Ticket721.load(ticket_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
     }
-
 
     public Integer[] getMyTickets(String owner) {
         try {
@@ -62,8 +55,5 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
         } catch (Exception e) {
             return null;
         }
-
     }
-
-
 }

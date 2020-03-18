@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.web3wallet.R;
 
+//Это не используется  - можно убрать
 public class MainFragment extends Fragment {
 
     private MainViewModel mViewModel;

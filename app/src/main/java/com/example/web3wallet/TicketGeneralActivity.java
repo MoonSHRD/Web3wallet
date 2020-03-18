@@ -21,24 +21,18 @@ public class TicketGeneralActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void startManageSaleActivity(View v) {
         Intent intent = new Intent(this,ManageTicketSaleActivity.class);
         startActivity(intent);
-    };
+    }
 
     public void startManageTicketsActivity(View v) {
         Intent intent = new Intent(this,BuyTicketActivity.class);
         startActivity(intent);
-    };
-
+    }
 }

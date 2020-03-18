@@ -26,7 +26,6 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
 
  //   public TicketFactory721 ticketfactory;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +34,8 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -62,14 +56,8 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
         createTicketSale(price,event_JID);
     }
 
-
-
     public void createTicketSale(BigInteger price, String event_JID) {
-
-
         String organizer_address = credentials.getAddress();
-
-
 
         try {
             CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID).sendAsync();
@@ -79,17 +67,12 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
                 // vtxHash = txHash;
                 Log.d("receipt", "receipt"+transactionReceipt);
                 Log.d("txhash", "txhash:" +txHash);
-
             }).exceptionally(transactionReceipt -> {
-
                 return null;
             });
         } catch (Exception e) {
             // Log.d("tx hash", "txhash"+txHash);
             Log.e("tx exeption", "Sale creation fails:",e);
-
         }
     }
-
-
 }
