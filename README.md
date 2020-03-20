@@ -122,3 +122,17 @@ public BigDecimal getSalePriceInfo(TicketSale721 sale_instance) {
 As you can see, you can get result of a s-c function call as simple as ```.get()```.  
 There are no need for interaction with transaction/events if you just want to retrive value.
 
+## Test application with local blockchain step-by-step
+1. install and deploy local 'one-click blockchain' enviroment by https://github.com/MoonSHRD/MS-Factory/blob/master/README.md#local-testing-step-by-step-manual
+2. copy your generated java artifacts file to this project
+3. in ganache go to settings -> server -> interface api -> change end-point from localhost to your Wi-Fi interface. By Default this api endpoint is 'localhost' which mean you wouldnt able to connect to it from app (cause app will try to connect with itself)
+4. in this project go to MainActivity -> connectToLocalNetwork -> api endpoint, and change api endpoint to your ganache end-point
+5. Now you are all set for testing blockchain interaction locally. 
+6. Interaction from app to blockchain may require some test ether. You can obtain it by Metamask
+For doing so you need to:
+6.1 export private key from ganache
+6.2 import private key to MetaMask
+6.3 connect MetaMask to ganache end-point
+6.4 send test ether from this key (administrator) to address, which have been generated from android app (user key)
+**Alternativly** you can just export ganache private key and restore them inside app. In this way you don't need to interact with MetaMask, but you should remember, that administrator key has a greater privelege for deployed contracts neither newly generated user key.
+
