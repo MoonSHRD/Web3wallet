@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 //import android.support.v7.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,8 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.web3wallet.ui.main.MainFragment;
-import com.onehilltech.promises.Promise;
+
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.abi.EventValues;
@@ -65,10 +63,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.ArrayIntrinsicsKt;
 
-//import com.onehilltech.promises.BuildConfig;
-//import com.onehilltech.promises.*;
-//import com.onehilltech.promises.R;
-//import com.onehilltech.promises.ResolvedOnUIThread;
+
 import static com.onehilltech.promises.Promise.await;
 import static com.onehilltech.promises.Promise.resolve;
 
@@ -84,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
     public static File walletFile;
 
     public static Web3j web3;
-   // private Promise p;
-   // private Rx
     public static Credentials credentials;
 
     public static KNS kns;
