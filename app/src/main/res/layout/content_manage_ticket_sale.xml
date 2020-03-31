@@ -30,4 +30,17 @@
         android:text="CreateSale"
         app:layout_constraintStart_toEndOf="@+id/TicketPrice"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/max_tickets"
+        android:layout_width="210dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="input max amount of tickets to sale"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TicketPrice" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

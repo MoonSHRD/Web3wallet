@@ -57,14 +57,19 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
         Integer iPrice = Integer.parseInt(sPrice);
         BigInteger price = BigInteger.valueOf(iPrice);
 
+        EditText eLimit = (EditText) findViewById(R.id.max_tickets);
+        String sLimit = eLimit.getText().toString();
+        Integer iLimit = Integer.parseInt(sLimit);
+        BigInteger limit = BigInteger.valueOf(iLimit);
+
         // for test
         String event_JID = "mutabor@conference.moonshard.tech";
-        createTicketSale(price,event_JID);
+        createTicketSale(price,event_JID,limit);
     }
 
 
 
-    public void createTicketSale(BigInteger price, String event_JID) {
+    public void createTicketSale(BigInteger price, String event_JID, BigInteger limit) {
 
 
         String organizer_address = credentials.getAddress();
@@ -72,7 +77,7 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
 
 
         try {
-            CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID).sendAsync();
+            CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID,limit).sendAsync();
             receipt.thenAccept(transactionReceipt -> {
                 // get tx receipt only if successful
                 String txHash = transactionReceipt.getTransactionHash(); // can play with that
