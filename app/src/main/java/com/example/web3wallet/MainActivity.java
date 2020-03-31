@@ -134,14 +134,6 @@ public class MainActivity extends AppCompatActivity {
         setupContracts();
       //  checkContractAddresses();
 
-       /*
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, MainFragment.newInstance())
-                    .commitNow();
-        }
-
-        */
 
 
 
@@ -630,11 +622,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // TODO: replace remotecall to Completable Future and async method
     public String GetWalletByJid(String JID) {   // TODO: check
         RemoteCall<String> WalletInstance = kns.GetWalletByJid(JID);
         return WalletInstance.toString();
     }
 
+    // TODO: replace remotecall to Completable Future and async method
     public String GetWalletByTel(String telephone) {   // TODO: check
         RemoteCall<String> WalletInstance = kns.GetWalletByTel(telephone);
         return WalletInstance.toString();
