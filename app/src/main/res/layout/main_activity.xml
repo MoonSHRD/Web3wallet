@@ -136,28 +136,6 @@
             app:layout_constraintStart_toEndOf="@+id/balanceHint"
             app:layout_constraintTop_toBottomOf="@+id/editPass" />
 
-        <Button
-            android:id="@+id/buttonMSW"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="72dp"
-            android:onClick="createSimpleMultisigWalletTestView"
-            android:text="CreateMultiSig test"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sendToInput" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:onClick="createMultipleMultisigWalTestView"
-            android:text="create Multi wallet test"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonMSW" />
-
         <EditText
             android:id="@+id/amountTo"
             android:layout_width="wrap_content"

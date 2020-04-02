@@ -19,7 +19,6 @@ import java.math.BigInteger;
 import java.util.concurrent.CompletableFuture;
 
 import static com.example.web3wallet.MainActivity.credentials;
-import static com.example.web3wallet.MainActivity.superfactory;
 import static com.example.web3wallet.MainActivity.ticketfactory;
 
 public class ManageTicketSaleActivity extends AppCompatActivity {
