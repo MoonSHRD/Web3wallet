@@ -19,7 +19,11 @@ import com.onehilltech.promises.Promise;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.abi.EventValues;
 import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -39,10 +43,14 @@ import org.web3j.utils.Convert;
 
 import java.io.Console;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
 import java.util.AbstractList;
@@ -97,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String deployed_net_id;
 
+    private ECKeyPair ecKeyPair;
+    private String sPrivateKeyInHex;
     // custom gasprice
     public static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();  // FIXME
 
@@ -138,13 +148,40 @@ public class MainActivity extends AppCompatActivity {
     public void createSimpleWallet(View v) {
         ePassword = (EditText) findViewById(R.id.newPass);
         password = ePassword.getText().toString();
+        generatePrivateKey();
 
+        //todo we can send private key as 'sPrivateKeyInHex' on server
+
+        /*
         try {
             fileName = WalletUtils.generateLightNewWalletFile(password, walletDir);
             String filepath = walletPath + "/" + fileName;
             toastAsync("Wallet generated" + filepath);
         } catch (Exception e) {
             toastAsync(e.getMessage());
+        }
+
+         */
+    }
+
+    public void generatePrivateKey() {
+        try {
+            ecKeyPair = Keys.createEcKeyPair();
+            BigInteger privateKeyInDec = ecKeyPair.getPrivateKey();
+            sPrivateKeyInHex = privateKeyInDec.toString(16);
+            createWalletWithKey();
+        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createWalletWithKey() {
+        try {
+            String fileName = WalletUtils.generateWalletFile(password, ecKeyPair, walletDir, false);
+            String filepath = walletPath + "/" + fileName;
+            toastAsync("Wallet generated" + filepath);
+        } catch (CipherException | IOException e) {
+            e.printStackTrace();
         }
     }
 
