@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -125,24 +126,16 @@ public class MainActivity extends AppCompatActivity {
 
         connectToLocalNetwork();
 
-        if (walletFile == null) {
-            createDummyKey();
+       String filePath = PreferenceManager.getDefaultSharedPreferences(this).getString("filePath", "");
+       walletFile = new File(filePath);
+
+        if(walletFile.exists() && !walletFile.isDirectory()) {
             loadDummyKey();
-        } else {
+        }else{
+            generatePrivateKey();
             loadDummyKey();
         }
-
         setupContracts();
-        //  checkContractAddresses();
-
-       /*
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, MainFragment.newInstance())
-                    .commitNow();
-        }
-
-        */
     }
 
     public void createSimpleWallet(View v) {
@@ -177,8 +170,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void createWalletWithKey() {
         try {
-            String fileName = WalletUtils.generateWalletFile(password, ecKeyPair, walletDir, false);
+            password = "1984";
+            fileName = WalletUtils.generateWalletFile(password, ecKeyPair, walletDir, false);
             String filepath = walletPath + "/" + fileName;
+            walletFile = new File(filepath);
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("filePath", filepath).apply();
             toastAsync("Wallet generated" + filepath);
         } catch (CipherException | IOException e) {
             e.printStackTrace();
@@ -269,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
         // FIXME: for bug with ganache connection. Should be replaced by address of our node
         // web3 = Web3j.build(new HttpService("HTTP://192.168.1.39:7545")); // defaults to http://localhost:8545/
-        web3 = Web3j.build(new HttpService("HTTP://192.168.1.3:7545")); // defaults to http://localhost:8545/
+        web3 = Web3j.build(new HttpService("HTTP://192.168.1.2:7545")); // defaults to http://localhost:8545/
         try {
             Web3ClientVersion clientVersion = web3.web3ClientVersion().sendAsync().get();
             if (!clientVersion.hasError()) {
