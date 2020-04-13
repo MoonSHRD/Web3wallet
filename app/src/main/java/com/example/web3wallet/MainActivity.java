@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
        walletFile = new File(filePath);
 
         if(walletFile.exists() && !walletFile.isDirectory()) {
+            fileName = walletFile.getName();
             loadDummyKey();
         }else{
             generatePrivateKey();
