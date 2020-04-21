@@ -30,6 +30,7 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.RemoteCall;
+import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.NetVersion;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         setupContracts();
 
       //todo  List<String> =  ticket.getTicketSales();
+        getTicketInfoByJid();
     }
 
     public void createSimpleWallet(View v) {
@@ -306,13 +308,6 @@ public class MainActivity extends AppCompatActivity {
 
     /*  CALLS FROM UI HERE */
 
-    public void createSimpleMultisigWalletTestView(View v) {
-        createSimpleMultisigWalletTest();
-    }
-
-    public void createMultipleMultisigWalTestView(View v) {
-        createMultisigWalTest();
-    }
 
     public void StartGeneralTicketActivity(View v) {
         Intent intent = new Intent(this, TicketGeneralActivity.class);
@@ -447,19 +442,6 @@ public class MainActivity extends AppCompatActivity {
     }
 */
 
-    public String createSimpleMultisigWalletTest() {
-        String _owner = getMyAddress();
-        BigInteger _required = new BigInteger("1");
-        BigInteger _dailyLimit = new BigInteger("10000");
-        String JID = "cheburek@conference.moonhsard.tech";
-        String telephone = "79687003680";
-
-        String txHash = createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
-
-        return txHash;
-    }
-
-
     // Send Funds to address
     public void SendEtherToAddress(String recepient, Float amount) {
         // credentials = WalletUtils.loadCredentials(password, walletDir);
@@ -475,5 +457,43 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("tx exemption", "failed to transfer funds:" + e);
         }
+    }
+
+    //todo present ticket
+
+    public void sendTicketAsPresent(){
+        ticket.transferFrom("fromJid","toJid",BigInteger.valueOf(2131321321));
+        //2131321321 - id ticket
+    }
+
+    public void renounceMinter(){
+        ticket.renounceMinter();
+    }
+
+    public void approveTicketAsPresent(){
+        ticket.approve("adres wallet",BigInteger.valueOf(2131321321));
+        //2131321321 - id ticket
+    }
+
+    //todo get ticketInfo
+    public void getTicketInfoByJid(){
+            CompletableFuture<BigInteger> receipt = ticketfactory.getEventIdByJid("mutabor@conference.moonshard.tech").sendAsync();
+            receipt.thenAccept(eventId -> {
+                Log.d("eventId", "eventId: " + eventId);
+            }).exceptionally(throwable ->{
+                Log.d("error","error"+ throwable.getMessage());
+                return null;
+            });
+    }
+
+    //todo qrCode
+    public void scanQrCode(){
+        CompletableFuture<TransactionReceipt> receipt =   ticketSale.redeemTicket("address_wallet",BigInteger.valueOf(2131321321)).sendAsync();
+        receipt.thenAccept(transactionReceipt -> {
+            Log.d("scanQrCode", "transactionReceipt: " + transactionReceipt.getBlockHash());
+        }).exceptionally(throwable ->{
+            Log.d("error","error"+ throwable.getMessage());
+            return null;
+        });
     }
 }
