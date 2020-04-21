@@ -46,6 +46,7 @@ public class BuyTicketActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SetupTicketContract();
+
     }
 
     public void getInfo(View v) {

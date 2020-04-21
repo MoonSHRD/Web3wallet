@@ -20,6 +20,7 @@ import com.onehilltech.promises.Promise;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.abi.EventValues;
 import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.datatypes.Type;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
@@ -46,7 +47,6 @@ import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
     public static SuperFactory superfactory;
     public static TicketFactory721 ticketfactory;
     public Ticket721 ticket;
+    public TicketSale721 ticketSale;
+
 
     public static String kns_address;
     public static String sup_factory_address;
@@ -137,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
             loadDummyKey();
         }
         setupContracts();
+
+      //todo  List<String> =  ticket.getTicketSales();
     }
 
     public void createSimpleWallet(View v) {
@@ -427,7 +431,41 @@ public class MainActivity extends AppCompatActivity {
         return txHash;
     }
 
-    // function createMultisigWallet with multiple owners
+    public void getTickets(){
+        CompletableFuture<List> receipt =  ticket.getTicketByOwner("addres_user_wallet").sendAsync();
+        try {
+            List myList = receipt.get(); //тут интежеры
+
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+    public void getTicketInfoByJid(){
+       // ticketfactory.getEventIdByJid()
+    }
+
+    public void presentTicket(){
+        ticket.approve("adres wallet","id ticket")
+    }
+
+    public void presentGetPresent(){
+        ticket.transferFrom()
+    }
+
+    public void removeTicket(){
+        ticket
+    }
+
+
+    public void scanQrCode(){
+        ticketSale.redeemTicket();
+    }
+
+     */
+
+        // function createMultisigWallet with multiple owners
     public Void createMultisigWalTest() {
         String _owner = getMyAddress();
         BigInteger _required = new BigInteger("1");

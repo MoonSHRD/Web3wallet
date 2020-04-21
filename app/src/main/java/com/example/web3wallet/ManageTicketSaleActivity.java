@@ -54,13 +54,16 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
         // for test
         String event_JID = "mutabor@conference.moonshard.tech";
         createTicketSale(price,event_JID);
+
+        //todo нельзя создать дв билетда под оджним джидом
+
     }
 
     public void createTicketSale(BigInteger price, String event_JID) {
         String organizer_address = credentials.getAddress();
 
         try {
-            CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID).sendAsync();
+            CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID, BigInteger.valueOf(2)).sendAsync();
             receipt.thenAccept(transactionReceipt -> {
                 // get tx receipt only if successful
                 String txHash = transactionReceipt.getTransactionHash(); // can play with that
