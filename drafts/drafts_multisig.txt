@@ -1,0 +1,112 @@
+ // Main function to create (Register) Standard MULTISignature wallet
+    public void createMultisigWal(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
+
+
+        List<String> _owners = new ArrayList<String>();
+
+        _owners.add(_owner);
+
+        try {
+            CompletableFuture<TransactionReceipt> receipt = superfactory.createWallet(_owners,_required,_dailyLimit,JID,telephone).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash(); // can play with that
+                // vtxHash = txHash;
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+            });
+
+            String txHash = receipt.get().getTransactionHash();
+          //  TransactionReceipt recept = receipt.get();
+          //  event = recept.
+            //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
+            Log.d("txHash", "createMultipleMultisigWallet RESULT HASH: "+txHash);
+        } catch (Exception e) {
+            // Log.d("tx hash", "txhash"+txHash);
+            Log.e("tx exeption", "createMultipleMultisigWallet Transaction fails:",e);
+
+        }
+
+    }
+
+
+
+ // Main function to create (Register) Simple Multisignature wallet with 2fa and replacer already setted at factory contract
+    public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {  //TODO: refactor this as main register wallet function, cleanup others
+
+       // TransactionReceipt recept;
+
+        /*
+        TransactionReceiptProcessor receiptProcessor =
+                new PollingTransactionReceiptProcessor(web3, TransactionManager.DEFAULT_POLLING_FREQUENCY,
+                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
+        */
+
+        String vtxHash = null;
+
+        try {
+            CompletableFuture<TransactionReceipt> receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).sendAsync();
+            receipt.thenAccept(transactionReceipt -> {
+                // get tx receipt only if successful
+                String txHash = transactionReceipt.getTransactionHash(); // can play with that
+
+               // EventValues eventValues = kns.getRegistredHumanEvents(transactionReceipt);
+                List eventResponseHuman = kns.getRegistredHumanEvents(transactionReceipt);
+
+
+
+
+                Log.d("event_values_human", "event_response: " + eventResponseHuman);
+
+
+                List eventValues = kns.getRegistredEvents(transactionReceipt);
+                Log.d("event_values", "event_values: " + eventValues);
+
+
+
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
+
+            }).exceptionally(transactionReceipt -> {
+
+                return null;
+
+            });
+
+
+            String txHash = receipt.get().getTransactionHash();
+            vtxHash = txHash;
+            List log = receipt.get().getLogs();
+
+            List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get());
+
+            String JID_responce = response.get(0).JID;
+            String wallet_responce = response.get(0).wallet;
+            String telephone_responce = response.get(0).tel;
+            String prime_owner_responce = response.get(0).prime_owner;
+
+
+
+
+            Log.d("event_response", "event_Human_registred_response: " +response);
+            Log.d("event_values", "event values: " + JID_responce + " " + telephone_responce + " " + prime_owner_responce + " " + wallet_responce);
+            Log.d("resultat", "new wallet address is: " + wallet_responce);
+
+
+
+            Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
+            Log.d("events logs", "event_logs:" +log);
+        } catch (Exception e) {
+            Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
+        }
+
+        return vtxHash;
+
+
+
+
+    }
+

@@ -83,6 +83,7 @@ import static com.onehilltech.promises.Promise.resolve;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private String password;
     private EditText ePassword;
     private String walletPath;
@@ -91,19 +92,17 @@ public class MainActivity extends AppCompatActivity {
     public static File walletFile;
 
     public static Web3j web3;
-    // private Promise p;
-    // private Rx
     public static Credentials credentials;
 
     public static KNS kns;
-    public static SuperFactory superfactory;
+  //  public static SuperFactory superfactory;
     public static TicketFactory721 ticketfactory;
     public Ticket721 ticket;
     public TicketSale721 ticketSale;
 
 
     public static String kns_address;
-    public static String sup_factory_address;
+  //  public static String sup_factory_address;
     public static String ticket_factory_address;
 
     private String deployed_net_id;
@@ -372,175 +371,55 @@ public class MainActivity extends AppCompatActivity {
     // setting up instances of smart contracts
     public void setupContracts() {
 
-        // FIXME: can't automatically get net id from artifacts, probably bug
-        /*
-        try{
-            String net_id =  web3.netVersion().send().getNetVersion();
-            deployed_net_id = net_id;
-        } catch (Exception e) {
-            Log.e("exeption", "can't get version of network (network id), check deployment script "+e);
-            Log.e("exeption","can't get version of network (network id), check deployment script",e);
-        }
-        */
-
         // FIXME: check net id for local and cloud enviroment
-        String net_id = "5777";  // 5777 - for ganache (local testing)
+        String net_id = "5777";  // 5777 - for ganache (local testing)  , 42 - moonshard private network (has not been deployed yet)
         deployed_net_id = net_id;
 
-        kns_address = KNS.getPreviouslyDeployedAddress(deployed_net_id);
-        sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);
-        ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id);
+        kns_address = KNS.getPreviouslyDeployedAddress(deployed_net_id);                    // Registry contract
+      //  sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);   // Multisigs factory contract, this one is deprecated as we do need to make multisigs now
+        ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id); // Ticket Factory contract
 
-        Log.d("deployed_address", "kns_address: " + kns_address);
-        Log.d("deployed_address", "sup_factory_address: " + sup_factory_address);
-        Log.d("deployed_address", "ticket_factory_address: " + ticket_factory_address);
+      //  Log.d("deployed_address", "kns_address: "+kns_address);
+      //  Log.d("deployed_address", "sup_factory_address: "+sup_factory_address);
+        Log.d("deployed_address", "ticket_factory_address: "+ticket_factory_address);
 
-        ContractGasProvider gasprovider = new DefaultGasProvider();
 
-        Log.d("gasLimit", "gasLimit: " + gasprovider.getGasLimit());
-        // gasprovider.getGasLimit();
+        ContractGasProvider gasprovider = new DefaultGasProvider();     // default (network dynamic gasprovider)
+      //  Log.d("gasLimit", "gasLimit: "+gasprovider.getGasLimit());    // uncomment this if you want to know network gas info
+       // gasprovider.getGasLimit();
+      //  Log.d("gasLimit", "custom gas limit: " + CUSTOM_GAS_LIMIT); // check out that our own custom gas limit was properly setted
 
-        Log.d("gasLimit", "custom gas limit: " + CUSTOM_GAS_LIMIT);
-
-        kns = KNS.load(kns_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
-        String check = kns.getContractAddress();
-        Log.d("instance_address", "KNS address: " + check);
 
         //  superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider()); //FIXME: change default gas provider to custom.  We will need this for invoking functions with gasprice = 0
         //  ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider()); // FIXME: probably could workaround with custom transaction calls. need to check that.
 
 
-        superfactory = SuperFactory.load(sup_factory_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
-        ticketfactory = TicketFactory721.load(ticket_factory_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
-        //ticket = Ticket721.
-
-        // Check
-        Log.d("instance_address", "superfactory address:" + superfactory.getContractAddress());
-        Log.d("instance_address ", "ticketfactory address:" + ticketfactory.getContractAddress());
+        kns = KNS.load(kns_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);                 // entangle java contract artifact to actuall contract
+       // superfactory = SuperFactory.load(sup_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);         // we are not using superfactory now
+        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
     }
 
-    public String createSimpleMultisigWalletTest() {
-        String _owner = getMyAddress();
-        BigInteger _required = new BigInteger("1");
-        BigInteger _dailyLimit = new BigInteger("10000");
-        String JID = "cheburek@conference.moonhsard.tech";
-        String telephone = "79687003680";
-
-        String txHash = createSimpleMultisigWallet(_owner, _required, _dailyLimit, JID, telephone);
-
-        return txHash;
-    }
-
-    public void getTickets(){
-        CompletableFuture<List> receipt =  ticket.getTicketByOwner("addres_user_wallet").sendAsync();
-        try {
-            List myList = receipt.get(); //тут интежеры
-
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
+    //WARN: DEPRECATED
+    // Saved this function for EXAMPLE OF USAGE
     /*
-    public void getTicketInfoByJid(){
-       // ticketfactory.getEventIdByJid()
-    }
-
-    public void presentTicket(){
-        ticket.approve("adres wallet","id ticket")
-    }
-
-    public void presentGetPresent(){
-        ticket.transferFrom()
-    }
-
-    public void removeTicket(){
-        ticket
-    }
-
-
-    public void scanQrCode(){
-        ticketSale.redeemTicket();
-    }
-
-     */
-
-        // function createMultisigWallet with multiple owners
-    public Void createMultisigWalTest() {
-        String _owner = getMyAddress();
-        BigInteger _required = new BigInteger("1");
-        BigInteger _dailyLimit = new BigInteger("10000");
-        String JID = "cheburek@conference.moonhsard.tech";
-        String telephone = "79687003680";
-
-        createMultisigWal(_owner, _required, _dailyLimit, JID, telephone);
-        return null;
-    }
-
-    // Main function to create (Register) Standard MULTISignature wallet
-    public void createMultisigWal(String _owner, BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {
-        List<String> _owners = new ArrayList<String>();
-
-        _owners.add(_owner);
-
-        try {
-            CompletableFuture<TransactionReceipt> receipt = superfactory.createWallet(_owners, _required, _dailyLimit, JID, telephone).sendAsync();
-            receipt.thenAccept(transactionReceipt -> {
-                // get tx receipt only if successful
-                String txHash = transactionReceipt.getTransactionHash(); // can play with that
-                // vtxHash = txHash;
-                Log.d("receipt", "receipt" + transactionReceipt);
-                Log.d("txhash", "txhash:" + txHash);
-            }).exceptionally(transactionReceipt -> {
-
-                return null;
-            });
-
-            String txHash = receipt.get().getTransactionHash();
-            //  TransactionReceipt recept = receipt.get();
-            //  event = recept.
-            //   TransactionReceipt txReceipt = receiptProcessor.waitForTransactionReceipt(txHash);
-            Log.d("txHash", "createMultipleMultisigWallet RESULT HASH: " + txHash);
-        } catch (Exception e) {
-            // Log.d("tx hash", "txhash"+txHash);
-            Log.e("tx exeption", "createMultipleMultisigWallet Transaction fails:", e);
-
-        }
-    }
-
     // Main function to create (Register) Simple Multisignature wallet with 2fa and replacer already setted at factory contract
-    public String createSimpleMultisigWallet(String _owner, BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {  //TODO: refactor this as main register wallet function, cleanup others
-
-        // TransactionReceipt recept;
-
-        /*
-        TransactionReceiptProcessor receiptProcessor =
-                new PollingTransactionReceiptProcessor(web3, TransactionManager.DEFAULT_POLLING_FREQUENCY,
-                        TransactionManager.DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH);
-        */
-
+    public String createSimpleMultisigWallet(String _owner,BigInteger _required, BigInteger _dailyLimit, String JID, String telephone) {  //TODO: refactor this as main register wallet function, cleanup others
         String vtxHash = null;
-
         try {
-            CompletableFuture<TransactionReceipt> receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).sendAsync();
+            CompletableFuture<TransactionReceipt> receipt = superfactory.createSimpleWallet(_owner, _required, _dailyLimit, JID, telephone).sendAsync(); // create simple multisig wallet
             receipt.thenAccept(transactionReceipt -> {
                 // get tx receipt only if successful
                 String txHash = transactionReceipt.getTransactionHash(); // can play with that
 
-                // EventValues eventValues = kns.getRegistredHumanEvents(transactionReceipt);
-                List eventResponseHuman = kns.getRegistredHumanEvents(transactionReceipt);
-
-
+               // EventValues eventValues = kns.getRegistredHumanEvents(transactionReceipt);
+                List eventResponseHuman = kns.getRegistredHumanEvents(transactionReceipt);  // get events from tx receipt
                 Log.d("event_values_human", "event_response: " + eventResponseHuman);
 
 
                 List eventValues = kns.getRegistredEvents(transactionReceipt);
                 Log.d("event_values", "event_values: " + eventValues);
-
-
-                Log.d("receipt", "receipt" + transactionReceipt);
-                Log.d("txhash", "txhash:" + txHash);
-
+                Log.d("receipt", "receipt"+transactionReceipt);
+                Log.d("txhash", "txhash:" +txHash);
             }).exceptionally(transactionReceipt -> {
                 return null;
             });
@@ -549,56 +428,37 @@ public class MainActivity extends AppCompatActivity {
             vtxHash = txHash;
             List log = receipt.get().getLogs();
 
-            List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get());
+            List<KNS.RegistredHumanEventResponse> response = kns.getRegistredHumanEvents(receipt.get()); //alternate call for events
 
-            String JID_responce = response.get(0).JID;
+            String JID_responce = response.get(0).JID; // get value of event
             String wallet_responce = response.get(0).wallet;
             String telephone_responce = response.get(0).tel;
             String prime_owner_responce = response.get(0).prime_owner;
 
-
-            Log.d("event_response", "event_Human_registred_response: " + response);
+            Log.d("event_response", "event_Human_registred_response: " +response);
             Log.d("event_values", "event values: " + JID_responce + " " + telephone_responce + " " + prime_owner_responce + " " + wallet_responce);
             Log.d("resultat", "new wallet address is: " + wallet_responce);
-
-
-            Log.d("txHash", "createSimpleMultisigWallet RESULT: " + txHash);
-            Log.d("events logs", "event_logs:" + log);
+            Log.d("txHash", "createSimpleMultisigWallet RESULT: "+txHash);
+            Log.d("events logs", "event_logs:" +log);
         } catch (Exception e) {
-            Log.e("tx exeption", "createMultisigWallet Transaction fails:", e);
+            Log.e("tx exeption", "createMultisigWallet Transaction fails:",e);
         }
         return vtxHash;
     }
+*/
 
-    // For testing purposes
-    public void checkContractAddresses() {
+    public String createSimpleMultisigWalletTest() {
+        String _owner = getMyAddress();
+        BigInteger _required = new BigInteger("1");
+        BigInteger _dailyLimit = new BigInteger("10000");
+        String JID = "cheburek@conference.moonhsard.tech";
+        String telephone = "79687003680";
 
-        //  kns_address = KNS.;
-        // sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);
-        //  ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id);
+        String txHash = createSimpleMultisigWallet(_owner,_required,_dailyLimit,JID,telephone);
 
-        //  Log.d("address", "kns_address: "+kns_address);
-        //  Log.d("address", "sup_factory_address: "+sup_factory_address);
-        //  Log.d("address", "ticket_factory_address: "+ticket_factory_address);
-
-        try {
-            String kns_address_check = KNS.getPreviouslyDeployedAddress("5777");
-            Log.d("address check", "KNS address (1 check): " + kns_address_check); // works fine
-
-        } catch (Exception e) {
-            Log.e("exeption", "unable to get contract address: ", e);
-        }
-
-        // 5777 - is for ganache
-        String kns_address_check = KNS.getPreviouslyDeployedAddress("5777");
-        Log.d("address check", "KNS address (2 check): " + kns_address_check); // works fine
-
-        //  kns = KNS.load(KNS.getContractAddress(),web3,credentials,new DefaultGasProvider());
-
-        kns = KNS.load(kns_address_check, web3, credentials, new DefaultGasProvider());  // worked only with loaded credentials (!!)
-        String check = kns.getContractAddress();
-        Log.d("try to retrive address(2)", "KNS address (3 check): " + check);
+        return txHash;
     }
+
 
     // Send Funds to address
     public void SendEtherToAddress(String recepient, Float amount) {
@@ -615,15 +475,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("tx exemption", "failed to transfer funds:" + e);
         }
-    }
-
-    public String GetWalletByJid(String JID) {   // TODO: check
-        RemoteCall<String> WalletInstance = kns.GetWalletByJid(JID);
-        return WalletInstance.toString();
-    }
-
-    public String GetWalletByTel(String telephone) {   // TODO: check
-        RemoteCall<String> WalletInstance = kns.GetWalletByTel(telephone);
-        return WalletInstance.toString();
     }
 }
