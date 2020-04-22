@@ -1,11 +1,6 @@
 package com.example.web3wallet;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-//import android.support.v7.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -14,40 +9,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.web3wallet.ui.main.MainFragment;
-import com.onehilltech.promises.Promise;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.web3j.abi.EventValues;
-import org.web3j.abi.FunctionReturnDecoder;
-import org.web3j.abi.datatypes.Type;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
-import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.RemoteCall;
-import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
-import org.web3j.protocol.core.methods.response.NetVersion;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tx.TransactionManager;
 import org.web3j.tx.Transfer;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
-import org.web3j.tx.response.PollingTransactionReceiptProcessor;
-import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Convert;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -55,31 +37,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-
+//import android.support.v7.app.AppCompatActivity;
 //import io.reactivex.rxjava3.core.*;
 //import io.reactivex.rxjava3.*;
 //import io.reactivex.Observable;
-
-
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import kotlin.ArrayIntrinsicsKt;
-
 //import com.onehilltech.promises.BuildConfig;
 //import com.onehilltech.promises.*;
 //import com.onehilltech.promises.R;
 //import com.onehilltech.promises.ResolvedOnUIThread;
-import static com.onehilltech.promises.Promise.await;
-import static com.onehilltech.promises.Promise.resolve;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -96,14 +64,14 @@ public class MainActivity extends AppCompatActivity {
     public static Credentials credentials;
 
     public static KNS kns;
-  //  public static SuperFactory superfactory;
+    //  public static SuperFactory superfactory;
     public static TicketFactory721 ticketfactory;
     public Ticket721 ticket;
     public TicketSale721 ticketSale;
 
 
     public static String kns_address;
-  //  public static String sup_factory_address;
+    //  public static String sup_factory_address;
     public static String ticket_factory_address;
 
     private String deployed_net_id;
@@ -128,24 +96,24 @@ public class MainActivity extends AppCompatActivity {
 
         connectToLocalNetwork();
 
-       String filePath = PreferenceManager.getDefaultSharedPreferences(this).getString("filePath", "");
-       walletFile = new File(filePath);
+        String filePath = PreferenceManager.getDefaultSharedPreferences(this).getString("filePath", "");
+        walletFile = new File(filePath);
 
-        if(walletFile.exists() && !walletFile.isDirectory()) {
+        if (walletFile.exists() && !walletFile.isDirectory()) {
             fileName = walletFile.getName();
             loadDummyKey();
-        }else{
+        } else {
             generatePrivateKey();
             loadDummyKey();
         }
         setupContracts();
 
-      //todo  List<String> =  ticket.getTicketSales();
+        //todo  List<String> =  ticket.getTicketSales();
         getTicketInfoByJid();
     }
 
     public void createSimpleWallet(View v) {
-        ePassword = (EditText) findViewById(R.id.newPass);
+        ePassword = findViewById(R.id.newPass);
         password = ePassword.getText().toString();
         generatePrivateKey();
 
@@ -220,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadSimpleWallet(View v) {
-        ePassword = (EditText) findViewById(R.id.editPass);
+        ePassword = findViewById(R.id.editPass);
         password = ePassword.getText().toString();
 
         try {
@@ -315,8 +283,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendMoneyView(View v) {
-        EditText eAddressTo = (EditText) findViewById(R.id.sendToInput);
-        EditText eAmount = (EditText) findViewById(R.id.amountTo);
+        EditText eAddressTo = findViewById(R.id.sendToInput);
+        EditText eAmount = findViewById(R.id.amountTo);
 
         String addressTo = eAddressTo.getText().toString();
         Float amountTo = Float.valueOf(eAmount.getText().toString());
@@ -327,13 +295,13 @@ public class MainActivity extends AppCompatActivity {
     public void showBalance(View v) {
         String balance = getBalance();
 
-        TextView mBalance = (TextView) findViewById(R.id.userBalance);
+        TextView mBalance = findViewById(R.id.userBalance);
         mBalance.setText(balance);
     }
 
     public void showAddress(View v) {
         String address = getMyAddress();
-        TextView mAddress = (TextView) findViewById(R.id.walletAdress);
+        TextView mAddress = findViewById(R.id.walletAdress);
         mAddress.setText(address);
         Log.d("address", address);
     }
@@ -371,27 +339,27 @@ public class MainActivity extends AppCompatActivity {
         deployed_net_id = net_id;
 
         kns_address = KNS.getPreviouslyDeployedAddress(deployed_net_id);                    // Registry contract
-      //  sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);   // Multisigs factory contract, this one is deprecated as we do need to make multisigs now
+        //  sup_factory_address = SuperFactory.getPreviouslyDeployedAddress(deployed_net_id);   // Multisigs factory contract, this one is deprecated as we do need to make multisigs now
         ticket_factory_address = TicketFactory721.getPreviouslyDeployedAddress(deployed_net_id); // Ticket Factory contract
 
-      //  Log.d("deployed_address", "kns_address: "+kns_address);
-      //  Log.d("deployed_address", "sup_factory_address: "+sup_factory_address);
-        Log.d("deployed_address", "ticket_factory_address: "+ticket_factory_address);
+        //  Log.d("deployed_address", "kns_address: "+kns_address);
+        //  Log.d("deployed_address", "sup_factory_address: "+sup_factory_address);
+        Log.d("deployed_address", "ticket_factory_address: " + ticket_factory_address);
 
 
         ContractGasProvider gasprovider = new DefaultGasProvider();     // default (network dynamic gasprovider)
-      //  Log.d("gasLimit", "gasLimit: "+gasprovider.getGasLimit());    // uncomment this if you want to know network gas info
-       // gasprovider.getGasLimit();
-      //  Log.d("gasLimit", "custom gas limit: " + CUSTOM_GAS_LIMIT); // check out that our own custom gas limit was properly setted
+        //  Log.d("gasLimit", "gasLimit: "+gasprovider.getGasLimit());    // uncomment this if you want to know network gas info
+        // gasprovider.getGasLimit();
+        //  Log.d("gasLimit", "custom gas limit: " + CUSTOM_GAS_LIMIT); // check out that our own custom gas limit was properly setted
 
 
         //  superfactory = SuperFactory.load(sup_factory_address,web3,credentials,new DefaultGasProvider()); //FIXME: change default gas provider to custom.  We will need this for invoking functions with gasprice = 0
         //  ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,new DefaultGasProvider()); // FIXME: probably could workaround with custom transaction calls. need to check that.
 
 
-        kns = KNS.load(kns_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);                 // entangle java contract artifact to actuall contract
-       // superfactory = SuperFactory.load(sup_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);         // we are not using superfactory now
-        ticketfactory = TicketFactory721.load(ticket_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);
+        kns = KNS.load(kns_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);                 // entangle java contract artifact to actuall contract
+        // superfactory = SuperFactory.load(sup_factory_address,web3,credentials,CUSTOM_GAS_PRICE,CUSTOM_GAS_LIMIT);         // we are not using superfactory now
+        ticketfactory = TicketFactory721.load(ticket_factory_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
     }
 
     //WARN: DEPRECATED
@@ -461,38 +429,43 @@ public class MainActivity extends AppCompatActivity {
 
     //todo present ticket
 
-    public void sendTicketAsPresent(){
-        ticket.transferFrom("fromJid","toJid",BigInteger.valueOf(2131321321));
+    public void sendTicketAsPresent() {
+        // принять
+        ticket.transferFrom("fromJid", "toJid", BigInteger.valueOf(2131321321));
         //2131321321 - id ticket
     }
 
-    public void renounceMinter(){
-        ticket.renounceMinter();
+    public void renounceMinter() {
+        //ticket.
     }
 
-    public void approveTicketAsPresent(){
-        ticket.approve("adres wallet",BigInteger.valueOf(2131321321));
+    //я отправляю текет дургому юзеру
+    public void approveTicketAsPresent() {
+        //todo tokenId - айдишник билета.
+        ticket.approve("adres wallet", BigInteger.valueOf(2131321321));
         //2131321321 - id ticket
     }
 
     //todo get ticketInfo
-    public void getTicketInfoByJid(){
-            CompletableFuture<BigInteger> receipt = ticketfactory.getEventIdByJid("mutabor@conference.moonshard.tech").sendAsync();
-            receipt.thenAccept(eventId -> {
-                Log.d("eventId", "eventId: " + eventId);
-            }).exceptionally(throwable ->{
-                Log.d("error","error"+ throwable.getMessage());
-                return null;
-            });
+    public void getTicketInfoByJid() {
+        CompletableFuture<BigInteger> receipt = ticketfactory.getEventIdByJid("mutabor@conference.moonshard.tech").sendAsync();
+        receipt.thenAccept(eventId -> {
+            Log.d("eventId", "eventId: " + eventId);
+        }).exceptionally(throwable -> {
+            Log.d("error", "error" + throwable.getMessage());
+            return null;
+        });
     }
 
     //todo qrCode
-    public void scanQrCode(){
-        CompletableFuture<TransactionReceipt> receipt =   ticketSale.redeemTicket("address_wallet",BigInteger.valueOf(2131321321)).sendAsync();
+    public void scanQrCode() {
+        CompletableFuture<TransactionReceipt> receipt = ticketSale.redeemTicket("address_wallet", BigInteger.valueOf(2131321321)).sendAsync();
         receipt.thenAccept(transactionReceipt -> {
+            // full field отсканирован
+            // payed - просто куплен но не отсканирован
             Log.d("scanQrCode", "transactionReceipt: " + transactionReceipt.getBlockHash());
-        }).exceptionally(throwable ->{
-            Log.d("error","error"+ throwable.getMessage());
+        }).exceptionally(throwable -> {
+            Log.d("error", "error" + throwable.getMessage());
             return null;
         });
     }

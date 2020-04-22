@@ -66,15 +66,8 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
         createTicketSale(price,event_JID,limit);
     }
 
-
-
     public void createTicketSale(BigInteger price, String event_JID, BigInteger limit) {
-
-
         String organizer_address = credentials.getAddress();
-
-
-
         try {
             CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID,limit).sendAsync();
             receipt.thenAccept(transactionReceipt -> {
@@ -83,17 +76,12 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
                 // vtxHash = txHash;
                 Log.d("receipt", "receipt"+transactionReceipt);
                 Log.d("txhash", "txhash:" +txHash);
-
             }).exceptionally(transactionReceipt -> {
-
                 return null;
             });
         } catch (Exception e) {
             // Log.d("tx hash", "txhash"+txHash);
             Log.e("tx exeption", "Sale creation fails:",e);
-
         }
     }
-
-
 }
