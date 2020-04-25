@@ -137,7 +137,7 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
     }
 
     public void scanQrCode() {
-        CompletableFuture<TransactionReceipt> receipt = ticketSale721.redeemTicket(credentials.getAddress(), BigInteger.valueOf(10550)).sendAsync();
+        CompletableFuture<TransactionReceipt> receipt = ticketSale721.redeemTicket(credentials.getAddress(), BigInteger.valueOf(1)).sendAsync();
         receipt.thenAccept(transactionReceipt -> {
             // full field отсканирован
             // payed - просто куплен но не отсканирован
