@@ -142,6 +142,8 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
             // full field отсканирован
             // payed - просто куплен но не отсканирован
             Log.d("scanQrCode", "transactionReceipt: " + transactionReceipt.getBlockHash());
+
+            List event_tx = ticket.getTicketFulfilledHumanEvents(transactionReceipt);
         }).exceptionally(throwable -> {
             Log.d("error", "error" + throwable.getMessage());
             return null;

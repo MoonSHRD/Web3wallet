@@ -157,6 +157,11 @@ public class BuyTicketActivity extends AppCompatActivity {
             // vtxHash = txHash;
             Log.d("receipt", "receipt"+transactionReceipt);
             Log.d("txhash", "txhash:" +txHash);
+
+            List events_tx = sale_instance.getTokensPurchasedEvents(transactionReceipt);
+            // do somthing with event response
+            List event_tx_ticket = ticket.getTicketBoughtHumanEvents(transactionReceipt);
+            // do somthing with event response
         }).exceptionally(transactionReceipt -> {
             Log.e("tx error", "tx error when BUY TICKEt:  " + transactionReceipt);
             return null;
