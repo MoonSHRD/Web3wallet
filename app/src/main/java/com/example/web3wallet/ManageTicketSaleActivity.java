@@ -12,10 +12,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static com.example.web3wallet.MainActivity.credentials;
@@ -68,6 +70,23 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
 
     public void createTicketSale(BigInteger price, String event_JID, BigInteger limit) {
         String organizer_address = credentials.getAddress();
+
+
+        /*
+        // This method get all events saleCreatedHuman without indexed values, with biggest range possible
+        ticketfactory
+                .saleCreatedHumanEventFlowable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                .subscribe(event -> {
+                    String org = event.organizer;
+                    BigInteger ev_id = event.event_id;
+                    String ev_JID = event.event_JID;
+                    Log.d("event_unindexed_by_event: ", event_JID);
+                });
+        */
+
+
+
+
         try {
             CompletableFuture<TransactionReceipt> receipt = ticketfactory.createTicketSale(organizer_address,price,event_JID,limit).sendAsync();
             receipt.thenAccept(transactionReceipt -> {
@@ -76,6 +95,14 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
                 // vtxHash = txHash;
                 Log.d("receipt", "receipt"+transactionReceipt);
                 Log.d("txhash", "txhash:" +txHash);
+
+
+                // This method get all event saleCreatedHuman within TRANSACTION range
+               List<TicketFactory721.SaleCreatedHumanEventResponse> event_tx = ticketfactory.getSaleCreatedHumanEvents(transactionReceipt);
+            //   event_tx.forEach(System.out::println); //FIXME -- do something with event response
+
+
+
             }).exceptionally(transactionReceipt -> {
                 return null;
             });
