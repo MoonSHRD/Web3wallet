@@ -55,7 +55,13 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
             }
         });
 
-
+        Button createNewTypeSale = findViewById(R.id.createNewTypeSale);
+        createNewTypeSale.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                createNewType();
+                getTicketSale("mutabor@conference.moonshard.tech");
+            }
+        });
     }
 
     public void setupTicketAsContract() {
@@ -92,6 +98,7 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
             return null;
         }
     }
+
 
     //получаю все купленные билеты - работает отлично
     public List<BigInteger>  getMyTicketsByOwner(String owner) {
@@ -144,6 +151,18 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
             Log.d("scanQrCode", "transactionReceipt: " + transactionReceipt.getBlockHash());
 
             List event_tx = ticket.getTicketFulfilledHumanEvents(transactionReceipt);
+        }).exceptionally(throwable -> {
+            Log.d("error", "error" + throwable.getMessage());
+            return null;
+        });
+    }
+
+    public void createNewType() {
+        CompletableFuture<TransactionReceipt> receipt = ticketfactory.PlugInTicketSale("0xaad88c7292dd3e1a19b1143a718eb18c999e9aec", BigInteger.valueOf(1)).sendAsync();
+        receipt.thenAccept(transactionReceipt -> {
+            // full field отсканирован
+            // payed - просто куплен но не отсканирован
+            Log.d("scanQrCode", "transactionReceipt: " + transactionReceipt.getBlockHash());
         }).exceptionally(throwable -> {
             Log.d("error", "error" + throwable.getMessage());
             return null;

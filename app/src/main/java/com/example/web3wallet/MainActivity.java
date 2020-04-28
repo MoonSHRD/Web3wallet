@@ -199,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public String getMyAddress() {
         try {
             credentials = WalletUtils.loadCredentials(password, walletDir);
