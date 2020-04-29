@@ -37,6 +37,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -456,6 +457,8 @@ public class MainActivity extends AppCompatActivity {
         receipt.thenAccept(transactionReceipt -> {
             // full field отсканирован
             // payed - просто куплен но не отсканирован
+            List event_tx = ticket.getTicketFulfilledHumanEvents(transactionReceipt);
+
             Log.d("scanQrCode", "transactionReceipt: " + transactionReceipt.getBlockHash());
         }).exceptionally(throwable -> {
             Log.d("error", "error" + throwable.getMessage());

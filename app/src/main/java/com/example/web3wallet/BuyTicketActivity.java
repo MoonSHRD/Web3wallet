@@ -2,6 +2,7 @@ package com.example.web3wallet;
 
 import android.os.Bundle;
 
+import com.example.web3wallet.lib.MainService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -46,6 +47,10 @@ public class BuyTicketActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SetupTicketContract();
+
+        MainService.initService(getBaseContext());
+
+
 
     }
 
