@@ -15,8 +15,23 @@ import java.util.concurrent.CompletableFuture;
 
 public class OrganizerService {
 
-    TicketSale721 ticketSale721;
+    TicketSale721 ticketSale721; //создается для каждой отдельной продажи
 
+    public OrganizerService(String eventJid) {
+        setupTicketSaleContract(eventJid);
+    }
+
+    public  CompletableFuture<TransactionReceipt> createTicketSale(String sPrice, String event_JID, String sLimit) {
+        int iPrice = Integer.parseInt(sPrice);
+        BigInteger price = BigInteger.valueOf(iPrice);
+
+        int iLimit = Integer.parseInt(sLimit);
+        BigInteger limit = BigInteger.valueOf(iLimit);
+
+        String organizer_address = MainService.getWalletService().getCredentials().getAddress();
+
+        return MainService.getWalletService().getTicketfactory().createTicketSale(organizer_address, price, event_JID, limit).sendAsync();
+    }
 
     /*
     public static void createTicketSale(String sPrice, String event_JID, String sLimit) {
@@ -44,18 +59,6 @@ public class OrganizerService {
         }
     }
      */
-
-    public static CompletableFuture<TransactionReceipt> createTicketSale(String sPrice, String event_JID, String sLimit) {
-        int iPrice = Integer.parseInt(sPrice);
-        BigInteger price = BigInteger.valueOf(iPrice);
-
-        int iLimit = Integer.parseInt(sLimit);
-        BigInteger limit = BigInteger.valueOf(iLimit);
-
-        String organizer_address = MainService.getWalletService().getCredentials().getAddress();
-
-        return MainService.getWalletService().getTicketfactory().createTicketSale(organizer_address, price, event_JID, limit).sendAsync();
-    }
 
     public void setupTicketSaleContract(String eventJid) {
         String[] saleInstances = getTicketSale(eventJid);    // Getting every items on sale

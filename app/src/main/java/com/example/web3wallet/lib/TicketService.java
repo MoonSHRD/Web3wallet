@@ -19,4 +19,11 @@ public class TicketService {
         }
     }
 
+    public  CompletableFuture<Tuple3<BigInteger, BigInteger, String>> getTicketInfoRx(int ticketId) {
+        try {
+            return  MainService.getWalletService().getTicket().ticketInfoStorage(BigInteger.valueOf(ticketId)).sendAsync();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

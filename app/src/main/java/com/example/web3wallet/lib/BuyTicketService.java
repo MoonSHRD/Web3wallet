@@ -15,9 +15,18 @@ import java.util.concurrent.CompletableFuture;
 
 public class BuyTicketService{
 
-    private TicketSale721 ticket_sale;
+   // private  static TicketSale721 ticket_sale;
 
-    public String[] getTicketSale(String event_jid){
+
+    public static void buyTicketView(String eventJid,int amount) {
+        String[] saleInstances = getTicketSale(eventJid);
+        String itemSaleAddress = saleInstances[0];
+        TicketSale721 itemSaleInstance = getSaleInstance(itemSaleAddress);
+
+        buyTicket(itemSaleInstance,BigDecimal.valueOf(amount));
+    }
+
+    public static String[] getTicketSale(String event_jid){
         try {
             CompletableFuture<BigInteger> event_id_call = MainService.getWalletService().getTicketfactory().getEventIdByJid(event_jid).sendAsync();
 
@@ -33,15 +42,11 @@ public class BuyTicketService{
         }
     }
 
-    public void buyTicketView(String eventJid,int amount) {
-        String[] saleInstances = getTicketSale(eventJid);
-        String itemSaleAddress = saleInstances[0];
-        TicketSale721 itemSaleInstance = getSaleInstance(itemSaleAddress);
-
-        buyTicket(itemSaleInstance,BigDecimal.valueOf(amount));
+    private static TicketSale721 getSaleInstance(String sale_address) {
+        return TicketSale721.load(sale_address,MainService.getWalletService().getWeb3(),MainService.getWalletService().getCredentials(),MainService.getWalletService().getCustomGasPrice(),MainService.getWalletService().getCustomGasLimit());
     }
 
-    public void buyTicket(TicketSale721 sale_instance, BigDecimal amount) {
+    public static void buyTicket(TicketSale721 sale_instance, BigDecimal amount) {
         BigDecimal price = getSalePriceInfo(sale_instance);
         BigDecimal price_wei = Convert.toWei(price, Convert.Unit.ETHER);
         BigDecimal sum = amount.multiply(price_wei);
@@ -64,7 +69,7 @@ public class BuyTicketService{
         });
     }
 
-    public BigDecimal getSalePriceInfo(TicketSale721 sale_instance) {
+    public static BigDecimal getSalePriceInfo(TicketSale721 sale_instance) {
         try {
             CompletableFuture<BigInteger> price_wei_call = sale_instance.rate().sendAsync();
             BigInteger price_wei_int = price_wei_call.get();
@@ -75,10 +80,5 @@ public class BuyTicketService{
             Log.e("tx-error","error in tx: " + e);
             return null;
         }
-    }
-
-    private TicketSale721 getSaleInstance(String sale_address) {
-        ticket_sale = TicketSale721.load(sale_address,MainService.getWalletService().getWeb3(),MainService.getWalletService().getCredentials(),MainService.getWalletService().getCustomGasPrice(),MainService.getWalletService().getCustomGasLimit());
-        return ticket_sale;
     }
 }

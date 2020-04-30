@@ -37,7 +37,7 @@ public class WalletService {
     public static Credentials credentials;
     private static KNS kns;
     private static TicketFactory721 ticketfactory;
-    public Ticket721 ticket;
+    public Ticket721 ticket; //todo singleton
 
 
     private static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();
