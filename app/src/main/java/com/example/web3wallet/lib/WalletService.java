@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.web3wallet.KNS;
+import com.example.web3wallet.Ticket721;
 import com.example.web3wallet.TicketFactory721;
 
 import org.web3j.crypto.CipherException;
@@ -23,6 +24,9 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.concurrent.CompletableFuture;
+
+import static com.example.web3wallet.MainActivity.ticketfactory;
 
 public class WalletService {
 
@@ -33,6 +37,8 @@ public class WalletService {
     public static Credentials credentials;
     private static KNS kns;
     private static TicketFactory721 ticketfactory;
+    public Ticket721 ticket;
+
 
     private static final BigInteger CUSTOM_GAS_PRICE = Convert.toWei("8", Convert.Unit.GWEI).toBigInteger();
     private static final BigInteger CUSTOM_GAS_LIMIT = BigInteger.valueOf(7_000_000);
@@ -81,6 +87,14 @@ public class WalletService {
 
         kns = KNS.load(kns_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);                 // entangle java contract artifact to actuall contract
         ticketfactory = TicketFactory721.load(ticket_factory_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
+
+        try {
+            CompletableFuture<String> ticket_template_address = ticketfactory.getTicketTemplateAddress().sendAsync();
+            String ticket_address = ticket_template_address.get();
+            ticket = Ticket721.load(ticket_address, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
+        } catch (Exception e) {
+
+        }
     }
 
     public void generatePrivateKey() {
@@ -101,7 +115,7 @@ public class WalletService {
             String filepath = walletPath + "/" + fileName;
             walletFile = new File(filepath);
             PreferenceManager.getDefaultSharedPreferences(context).edit().putString("filePath", filepath).apply();
-            Log.d("createWalletWithKey","Wallet generated" + filepath);
+            Log.d("createWalletWithKey", "Wallet generated" + filepath);
         } catch (CipherException | IOException e) {
             e.printStackTrace();
         }
@@ -123,15 +137,14 @@ public class WalletService {
     public String getMyAddress() {
         try {
             credentials = WalletUtils.loadCredentials(password, walletDir);
-            Log.d("myAddress","Your address is " + credentials.getAddress());
+            Log.d("myAddress", "Your address is " + credentials.getAddress());
         } catch (Exception e) {
-            Log.d("myAddress","Error: "+e.getMessage());
+            Log.d("myAddress", "Error: " + e.getMessage());
         }
         return credentials.getAddress();
     }
 
-
-    private Web3j getWeb3() {
+    Web3j getWeb3() {
         return web3;
     }
 
@@ -139,7 +152,19 @@ public class WalletService {
         return ticketfactory;
     }
 
-    public Credentials getCredentials() {
+    Ticket721 getTicket() {
+        return ticket;
+    }
+
+    Credentials getCredentials() {
         return credentials;
+    }
+
+    public  BigInteger getCustomGasPrice() {
+        return CUSTOM_GAS_PRICE;
+    }
+
+    public BigInteger getCustomGasLimit() {
+        return CUSTOM_GAS_LIMIT;
     }
 }

@@ -78,7 +78,6 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
         ticketSale721 = TicketSale721.load(itemSaleAddress, web3, credentials, CUSTOM_GAS_PRICE, CUSTOM_GAS_LIMIT);
     }
 
-
     // возвращает инстансы продаж по каждому типу билетов т.е адресс продажи в массиве
     public String[] getTicketSale(String event_jid) {
         try {
@@ -95,7 +94,6 @@ public class ManageMyTicketsActivity extends AppCompatActivity {
             return null;
         }
     }
-
 
     //получаю все купленные билеты - работает отлично
     public List<BigInteger> getMyTicketsByOwner(String owner) {
