@@ -44,16 +44,16 @@ public class WalletService {
 
     private ECKeyPair ecKeyPair;
     private String sPrivateKeyInHex;
-    private String password;
     private String fileName;
     public static File walletFile;
     private String walletPath;
     private File walletDir;
 
     private Context context;
+    String password;
 
-
-    public WalletService(Context context) {
+    public WalletService(Context context,String password) {
+        this.password = password;
         this.context = context;
         walletPath = context.getFilesDir().getAbsolutePath();
         walletDir = new File(walletPath);
@@ -111,7 +111,6 @@ public class WalletService {
 
     private void createWalletWithKey() {
         try {
-            password = "1984";
             fileName = WalletUtils.generateWalletFile(password, ecKeyPair, walletDir, false);
             String filepath = walletPath + "/" + fileName;
             walletFile = new File(filepath);
@@ -124,7 +123,6 @@ public class WalletService {
 
     // load dummy key with default password
     public void loadDummyKey() {
-        password = "1984";
         try {
             String path = walletPath + "/" + fileName;
             walletDir = new File(path);
