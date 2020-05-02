@@ -14,54 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".ManageMyTicketsActivity"
-            android:label="@string/title_activity_manage_my_tickets"
-            android:parentActivityName=".BuyTicketActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.web3wallet.BuyTicketActivity" />
-        </activity>
-        <activity
-            android:name=".BuyTicketActivity"
-            android:label="@string/title_activity_buy_ticket"
-            android:parentActivityName=".TicketGeneralActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.web3wallet.TicketGeneralActivity" />
-        </activity>
-        <activity
-            android:name=".ManageTicketSaleActivity"
-            android:label="@string/title_activity_manage_ticket_sale"
-            android:parentActivityName=".TicketGeneralActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.web3wallet.TicketGeneralActivity" />
-        </activity>
-        <activity
-            android:name=".TicketGeneralActivity"
-            android:label="@string/title_activity_ticket_general"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.web3wallet.MainActivity" />
-        </activity>
 
         <service
-            android:name=".EthConnectIntentService"
+            android:name=".contracts.EthConnectIntentService"
             android:exported="false" />
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

@@ -4,18 +4,17 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.web3wallet.KNS;
-import com.example.web3wallet.Ticket721;
-import com.example.web3wallet.TicketFactory721;
+import com.example.web3wallet.contracts.KNS;
+import com.example.web3wallet.contracts.Ticket721;
+import com.example.web3wallet.contracts.TicketFactory721;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
-import org.web3j.tx.gas.ContractGasProvider;
-import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
 import java.io.File;
@@ -24,9 +23,9 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.concurrent.CompletableFuture;
-
-import static com.example.web3wallet.MainActivity.ticketfactory;
 
 public class WalletService {
 
@@ -62,6 +61,8 @@ public class WalletService {
 
         String filePath = PreferenceManager.getDefaultSharedPreferences(context).getString("filePath", "");
         walletFile = new File(filePath);
+
+        setupBouncyCastle();
 
         if (walletFile.exists() && !walletFile.isDirectory()) {
             fileName = walletFile.getName();
@@ -132,6 +133,25 @@ public class WalletService {
         } catch (Exception e) {
             Log.d("my address", "my address is: " + credentials.getAddress());
         }
+    }
+
+    // WARN! workaround for bug with ECDA signatures.
+    private void setupBouncyCastle() {
+        final Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
+        if (provider == null) {
+            // Web3j will set up the provider lazily when it's first used.
+            return;
+        }
+        if (provider.getClass().equals(BouncyCastleProvider.class)) {
+            // BC with same package name, shouldn't happen in real life.
+            return;
+        }
+        // Android registers its own BC provider. As it might be outdated and might not include
+        // all needed ciphers, we substitute it with a known BC bundled in the app.
+        // Android's BC has its package rewritten to "com.android.org.bouncycastle" and because
+        // of that it's possible to have another BC implementation loaded in VM.
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
     public String getMyAddress() {

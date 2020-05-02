@@ -1,4 +1,4 @@
-package com.example.web3wallet;
+package com.example.web3wallet.contracts;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;

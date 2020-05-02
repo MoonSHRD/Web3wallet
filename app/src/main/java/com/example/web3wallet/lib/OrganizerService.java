@@ -2,11 +2,8 @@ package com.example.web3wallet.lib;
 
 import android.util.Log;
 
-import com.example.web3wallet.Ticket721;
-import com.example.web3wallet.TicketFactory721;
-import com.example.web3wallet.TicketSale721;
+import com.example.web3wallet.contracts.TicketSale721;
 
-import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
