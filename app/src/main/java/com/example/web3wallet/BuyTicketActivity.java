@@ -49,9 +49,6 @@ public class BuyTicketActivity extends AppCompatActivity {
         SetupTicketContract();
 
         MainService.initService(getBaseContext());
-
-
-
     }
 
     public void getInfo(View v) {
@@ -60,10 +57,8 @@ public class BuyTicketActivity extends AppCompatActivity {
         String[] saleInstances = getTicketSale(JID);    // Getting every items on sale
         String itemSaleAddress = saleInstances[0];      // Get address of particular item sale
         TicketSale721 itemSaleInstance = getSaleInstance(itemSaleAddress);  // Get instance of particular item sale
-        BigDecimal price_wei = getSalePriceInfo(itemSaleInstance);
-        // FIXME : convert price from wei (?)
-        TextView sPrice = (TextView) findViewById(R.id.event_price);
-        sPrice.setText(price_wei.toString());
+        String priceTicket = getSalePriceInfo(itemSaleInstance).toString();
+        BigInteger typeTicket = getTicketType(itemSaleInstance).toBigInteger();
     }
 
     public void buyTicketView(View v) {
@@ -83,11 +78,8 @@ public class BuyTicketActivity extends AppCompatActivity {
     }
 
 
-
     public void SetupTicketContract() {
         try {
-
-
          //   RemoteCall<String> ticket_template_address = ticketfactory.getTicketTemplateAddress().send();   //FIXME: change to async send.  //TODO: change to async send
           CompletableFuture <String> ticket_template_address = ticketfactory.getTicketTemplateAddress().sendAsync();
             String ticket_address = ticket_template_address.get();
@@ -95,7 +87,6 @@ public class BuyTicketActivity extends AppCompatActivity {
         } catch(Exception e) {
             Log.e("eth_call_fail","error during ticket contract setup: ", e);
         }
-
     }
 
     public String[] getTicketSale(String event_jid){
@@ -140,6 +131,19 @@ public class BuyTicketActivity extends AppCompatActivity {
             BigDecimal price_wei = new BigDecimal(price_wei_int);
             BigDecimal price = Convert.fromWei(price_wei, Convert.Unit.ETHER);
             return price;
+        } catch (Exception e) {
+            Log.e("tx-error","error in tx: " + e);
+            return null;
+        }
+    }
+
+    public BigDecimal getTicketType(TicketSale721 sale_instance) {
+        try {
+            CompletableFuture<BigInteger> price_wei_call = sale_instance._ticket_type().sendAsync();
+            BigInteger price_wei_int = price_wei_call.get();
+            BigDecimal price_wei = new BigDecimal(price_wei_int);
+            BigDecimal ticketType = Convert.fromWei(price_wei, Convert.Unit.ETHER);
+            return ticketType;
         } catch (Exception e) {
             Log.e("tx-error","error in tx: " + e);
             return null;

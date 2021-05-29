@@ -99,6 +99,7 @@ public class ManageTicketSaleActivity extends AppCompatActivity {
 
                 // This method get all event saleCreatedHuman within TRANSACTION range
                List<TicketFactory721.SaleCreatedHumanEventResponse> event_tx = ticketfactory.getSaleCreatedHumanEvents(transactionReceipt);
+
             //   event_tx.forEach(System.out::println); //FIXME -- do something with event response
 
 
